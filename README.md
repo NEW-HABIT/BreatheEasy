@@ -155,10 +155,28 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 5. Production Build
+### 5. Production Build & Deployment to Vercel
+
+#### Deploying on Vercel:
+1. Push your repository to GitHub (see below).
+2. Go to [vercel.com](https://vercel.com) and click **"Add New Project"** ➔ Import your GitHub repository.
+3. Keep default settings:
+   - **Framework Preset:** Next.js
+   - **Root Directory:** `./`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `.next`
+4. *(Optional)* In **Environment Variables**, add:
+   - `GEMINI_API_KEY`: *(Your Google AI Studio Gemini key)*
+   - `NEXT_PUBLIC_GEMINI_API_KEY`: *(Your Google AI Studio Gemini key)*
+5. Click **Deploy**. Vercel will build and deploy the app with global edge CDN and zero downtime!
+
+#### Pushing to GitHub:
 ```bash
-npm run build
-npm start
+git add .
+git commit -m "feat: complete BreatheEasy with aesthetic UI and Vercel readiness"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+git push -u origin main
 ```
 
 ---
