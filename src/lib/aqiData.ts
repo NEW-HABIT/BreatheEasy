@@ -17,11 +17,12 @@ export function getAqiCategory(aqi: number): {
   border: string;
   advice: string;
 } {
-  if (aqi <= 50) return { category: 'Good', ...AQI_LEVELS.good, advice: 'Air quality is satisfactory. Enjoy regular outdoor activities and natural ventilation.' };
-  if (aqi <= 100) return { category: 'Moderate', ...AQI_LEVELS.moderate, advice: 'Air quality is acceptable. Exceptionally sensitive people should consider limiting prolonged outdoor exertion.' };
-  if (aqi <= 150) return { category: 'Unhealthy for Sensitive Groups', ...AQI_LEVELS.sensitive, advice: 'Children, older adults, and individuals with respiratory issues should reduce outdoor exertion.' };
-  if (aqi <= 200) return { category: 'Unhealthy', ...AQI_LEVELS.unhealthy, advice: 'Everyone may begin to experience health effects. Wear N95 masks outside and run indoor HEPA filtration.' };
-  if (aqi <= 300) return { category: 'Very Unhealthy', ...AQI_LEVELS.veryUnhealthy, advice: 'Health alert: risk of health effects is increased for everyone. Keep all windows sealed.' };
+  const safeAqi = typeof aqi === 'number' && !isNaN(aqi) ? aqi : 150;
+  if (safeAqi <= 50) return { category: 'Good', ...AQI_LEVELS.good, advice: 'Air quality is satisfactory. Enjoy regular outdoor activities and natural ventilation.' };
+  if (safeAqi <= 100) return { category: 'Moderate', ...AQI_LEVELS.moderate, advice: 'Air quality is acceptable. Exceptionally sensitive people should consider limiting prolonged outdoor exertion.' };
+  if (safeAqi <= 150) return { category: 'Unhealthy for Sensitive Groups', ...AQI_LEVELS.sensitive, advice: 'Children, older adults, and individuals with respiratory issues should reduce outdoor exertion.' };
+  if (safeAqi <= 200) return { category: 'Unhealthy', ...AQI_LEVELS.unhealthy, advice: 'Everyone may begin to experience health effects. Wear N95 masks outside and run indoor HEPA filtration.' };
+  if (safeAqi <= 300) return { category: 'Very Unhealthy', ...AQI_LEVELS.veryUnhealthy, advice: 'Health alert: risk of health effects is increased for everyone. Keep all windows sealed.' };
   return { category: 'Hazardous', ...AQI_LEVELS.hazardous, advice: 'Emergency conditions: severe winter smog. Avoid all outdoor physical activity. Seal entry gaps with damp towels.' };
 }
 
@@ -29,12 +30,21 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
   riskLevel: 'Low' | 'Moderate' | 'High' | 'Severe';
   advice: string[];
 } {
-  const isVulnerableAge = member.age < 12 || member.age > 60;
-  const hasRespiratoryIssues = member.healthConditions.some(c => 
-    ['asthma', 'bronchitis', 'allergies', 'cardiovascular', 'copd'].includes(c.toLowerCase())
+  const safeAqi = typeof aqi === 'number' && !isNaN(aqi) ? aqi : 150;
+  const memberAge = typeof member.age === 'number' ? member.age : 30;
+  const isVulnerableAge = memberAge < 12 || memberAge > 60;
+
+  const conditions = Array.isArray(member.healthConditions)
+    ? member.healthConditions
+    : typeof member.healthConditions === 'string'
+    ? (member.healthConditions as string).split(',').map(s => s.trim()).filter(Boolean)
+    : [];
+
+  const hasRespiratoryIssues = conditions.some(c => 
+    typeof c === 'string' && ['asthma', 'bronchitis', 'allergies', 'cardiovascular', 'copd', 'wheezing', 'hypertension', 'sensitivity'].some(term => c.toLowerCase().includes(term))
   );
 
-  if (aqi > 250) {
+  if (safeAqi > 250) {
     if (hasRespiratoryIssues || isVulnerableAge) {
       return {
         riskLevel: 'Severe',

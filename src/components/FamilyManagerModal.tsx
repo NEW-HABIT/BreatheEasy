@@ -92,7 +92,7 @@ export const FamilyManagerModal: React.FC<FamilyManagerModalProps> = ({
                   </div>
                   <div className="flex items-center space-x-1.5 mt-1 text-xs text-slate-500">
                     <Heart className="h-3 w-3 text-rose-500" />
-                    <span>Conditions: <strong className="text-slate-700">{m.healthConditions.join(', ') || 'None'}</strong></span>
+                    <span>Conditions: <strong className="text-slate-700">{Array.isArray(m.healthConditions) ? (m.healthConditions.join(', ') || 'None') : (m.healthConditions || 'None')}</strong></span>
                   </div>
                 </div>
 

@@ -149,12 +149,15 @@ def db_user_to_dict(user: UserModel) -> dict:
 
 
 def db_member_to_dict(m: FamilyMemberModel) -> dict:
+    conditions = [c.strip() for c in (m.health_conditions or "").split(",") if c.strip()]
+    if not conditions:
+        conditions = ["None"]
     return {
         "id": m.id,
         "name": m.name,
         "role": m.role,
         "age": m.age,
-        "healthConditions": m.health_conditions,
+        "healthConditions": conditions,
         "riskLevel": m.risk_level,
     }
 

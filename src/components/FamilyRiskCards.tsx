@@ -70,6 +70,11 @@ export const FamilyRiskCards: React.FC<FamilyRiskCardsProps> = ({
         {familyMembers.map((member) => {
           const { riskLevel, advice } = calculateFamilyRisk(member, aqiData.aqi);
           const Icon = getRoleIcon(member.role);
+          const condList: string[] = Array.isArray(member.healthConditions)
+            ? member.healthConditions
+            : typeof member.healthConditions === 'string'
+            ? (member.healthConditions as string).split(',').map((s: string) => s.trim()).filter(Boolean)
+            : [];
 
           return (
             <div
@@ -95,7 +100,7 @@ export const FamilyRiskCards: React.FC<FamilyRiskCardsProps> = ({
 
                 {/* Health conditions pills */}
                 <div className="flex flex-wrap gap-1 mt-3">
-                  {member.healthConditions.map((cond, idx) => (
+                  {condList.map((cond, idx) => (
                     <span
                       key={idx}
                       className="text-[10px] font-semibold bg-white/90 text-slate-600 border border-slate-200 px-2 py-0.5 rounded-lg"
@@ -118,7 +123,7 @@ export const FamilyRiskCards: React.FC<FamilyRiskCardsProps> = ({
 
               {/* Instant AI inquiry for this specific member */}
               <button
-                onClick={() => onAskAI(`What specific protective measures and routine adjustments should I take for ${member.name} (${member.role}, ${member.age} yrs, ${member.healthConditions.join(', ')}) in ${aqiData.city} with AQI ${aqiData.aqi}?`)}
+                onClick={() => onAskAI(`What specific protective measures and routine adjustments should I take for ${member.name} (${member.role}, ${member.age} yrs, ${condList.join(', ') || 'None'}) in ${aqiData.city} with AQI ${aqiData.aqi}?`)}
                 className="mt-3.5 w-full py-1.5 px-2.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold transition flex items-center justify-center space-x-1 shadow-sm"
               >
                 <Sparkles className="h-3 w-3 text-emerald-600" />

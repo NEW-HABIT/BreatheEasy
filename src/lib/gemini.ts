@@ -14,9 +14,14 @@ export async function askAirQualityAdvisor({
   conversationHistory?: { role: 'user' | 'assistant'; content: string }[];
   customApiKey?: string;
 }): Promise<{ text: string; impactHighlight?: { co2SavedKg?: number; pm25DropPercent?: number } }> {
-  const familyContext = familyMembers.map(m => 
-    `- ${m.name} (${m.role}, ${m.age} yrs old, Health conditions: ${m.healthConditions.join(', ') || 'None'})`
-  ).join('\n');
+  const familyContext = familyMembers.map(m => {
+    const conditions = Array.isArray(m.healthConditions)
+      ? m.healthConditions.join(', ')
+      : typeof m.healthConditions === 'string'
+      ? m.healthConditions
+      : 'None';
+    return `- ${m.name} (${m.role}, ${m.age} yrs old, Health conditions: ${conditions || 'None'})`;
+  }).join('\n');
 
   const systemPrompt = `You are "BreatheEasy AI", a world-class GenAI urban air quality advisor and environmental epidemiologist.
 Your mission is to help families and communities navigate severe winter smog and urban air pollution with actionable, science-backed guidance.
@@ -82,9 +87,14 @@ function generateExpertFallbackResponse(
   familyMembers: FamilyMember[]
 ): { text: string; impactHighlight?: { co2SavedKg?: number; pm25DropPercent?: number } } {
   const q = question.toLowerCase();
-  const vulnerableMembers = familyMembers.filter(m => 
-    m.age < 12 || m.age > 60 || m.healthConditions.some(c => c.toLowerCase() !== 'none')
-  );
+  const vulnerableMembers = familyMembers.filter(m => {
+    const conditions = Array.isArray(m.healthConditions)
+      ? m.healthConditions
+      : typeof m.healthConditions === 'string'
+      ? (m.healthConditions as string).split(',').map((c: string) => c.trim())
+      : [];
+    return m.age < 12 || m.age > 60 || conditions.some((c: string) => c.toLowerCase() !== 'none' && c.length > 0);
+  });
 
   if (q.includes('child') || q.includes('kid') || q.includes('baby') || q.includes('asthma')) {
     const names = vulnerableMembers.map(m => m.name).join(' and ') || 'your vulnerable family members';
