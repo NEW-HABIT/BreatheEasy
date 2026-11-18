@@ -40,6 +40,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
   const navItems = [
     { id: 'dashboard', label: 'Overview', icon: Wind },
+    { id: 'map', label: 'Live Map', icon: MapPin },
     { id: 'routine', label: 'Diurnal Routine', icon: Calendar },
     { id: 'swaps', label: 'Eco Swaps', icon: ArrowLeftRight },
     { id: 'hacks', label: 'IAQ Hacks', icon: ShieldAlert },

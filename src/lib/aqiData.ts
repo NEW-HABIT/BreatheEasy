@@ -108,6 +108,8 @@ export const CITIES_DATA: Record<string, AqiData> = {
   'New Delhi': {
     city: 'New Delhi',
     country: 'India',
+    latitude: 28.6139,
+    longitude: 77.2090,
     aqi: 348,
     category: 'Hazardous',
     primaryPollutant: 'PM2.5',
@@ -150,6 +152,8 @@ export const CITIES_DATA: Record<string, AqiData> = {
   'Lahore': {
     city: 'Lahore',
     country: 'Pakistan',
+    latitude: 31.5497,
+    longitude: 74.3436,
     aqi: 385,
     category: 'Hazardous',
     primaryPollutant: 'PM2.5',
@@ -192,6 +196,8 @@ export const CITIES_DATA: Record<string, AqiData> = {
   'Mumbai': {
     city: 'Mumbai',
     country: 'India',
+    latitude: 19.0760,
+    longitude: 72.8777,
     aqi: 168,
     category: 'Unhealthy',
     primaryPollutant: 'PM2.5',
@@ -234,6 +240,8 @@ export const CITIES_DATA: Record<string, AqiData> = {
   'Beijing': {
     city: 'Beijing',
     country: 'China',
+    latitude: 39.9042,
+    longitude: 116.4074,
     aqi: 142,
     category: 'Unhealthy for Sensitive Groups',
     primaryPollutant: 'PM2.5',
@@ -276,6 +284,8 @@ export const CITIES_DATA: Record<string, AqiData> = {
   'London': {
     city: 'London',
     country: 'United Kingdom',
+    latitude: 51.5074,
+    longitude: -0.1278,
     aqi: 45,
     category: 'Good',
     primaryPollutant: 'NO2',

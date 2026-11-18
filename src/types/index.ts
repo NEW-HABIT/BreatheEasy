@@ -18,6 +18,8 @@ export interface PollutantBreakdown {
 export interface AqiData {
   city: string;
   country: string;
+  latitude?: number;
+  longitude?: number;
   aqi: number;
   category: AqiCategory;
   primaryPollutant: string;

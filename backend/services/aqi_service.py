@@ -61,8 +61,21 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
     latitude = lat
     longitude = lng
 
-    # 1. Geocode if coordinates not directly supplied
-    if latitude is None or longitude is None:
+    # 1. Geocode if coordinates not directly supplied, or reverse-geocode if GPS coords provided
+    if latitude is not None and longitude is not None:
+        if not city or city.lower() in ("my location", "current location", "gps", "detected location"):
+            try:
+                rev_url = f"https://nominatim.openstreetmap.org/reverse?lat={latitude}&lon={longitude}&format=json"
+                rev_data = fetch_json(rev_url, timeout=3)
+                if rev_data and "address" in rev_data:
+                    addr = rev_data["address"]
+                    resolved_city = addr.get("city") or addr.get("town") or addr.get("suburb") or addr.get("state_district") or addr.get("state") or f"Location ({latitude:.2f}°N, {longitude:.2f}°E)"
+                    resolved_country = addr.get("country", "Global")
+                else:
+                    resolved_city = f"Location ({latitude:.2f}°N, {longitude:.2f}°E)"
+            except Exception:
+                resolved_city = f"GPS Pin ({latitude:.2f}°N, {longitude:.2f}°E)"
+    elif latitude is None or longitude is None:
         try:
             geo_query = urllib.parse.quote(city)
             geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={geo_query}&count=1&language=en&format=json"

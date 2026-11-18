@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { Navbar } from '@/components/Navbar';
 import { AlertBanner } from '@/components/AlertBanner';
 import { AqiGauge } from '@/components/AqiGauge';
@@ -16,6 +17,7 @@ import { IndoorHacks } from '@/components/IndoorHacks';
 import { CommunityBoard } from '@/components/CommunityBoard';
 import { AiAdvisorChat } from '@/components/AiAdvisorChat';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
+import { GpsLocatingModal } from '@/components/GpsLocatingModal';
 import { fetchLiveAqi, fetchCommunityPosts, fetchSwapsFromBackend } from '@/lib/api';
 import { DEFAULT_FAMILY_MEMBERS, INITIAL_COMMUNITY_POSTS } from '@/lib/store';
 import { INITIAL_SUSTAINABLE_SWAPS } from '@/lib/impactCalculator';
@@ -23,6 +25,19 @@ import { CITIES_DATA } from '@/lib/aqiData';
 import { AqiData, FamilyMember } from '@/types';
 import { useAuth } from '@/context/AuthContext';
 import { ArrowRight, Leaf, Lock, LogIn, UserPlus, Sparkles, CheckCircle2 } from 'lucide-react';
+
+const RealtimeAqiMap = dynamic(
+  () => import('@/components/RealtimeAqiMap').then((mod) => mod.RealtimeAqiMap),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="glass-card rounded-3xl p-6 h-[400px] flex flex-col items-center justify-center space-y-3">
+        <div className="h-8 w-8 rounded-full border-2 border-emerald-500 border-t-transparent animate-spin" />
+        <p className="text-xs font-bold text-slate-600">Loading Real-Time Atmospheric Satellite Map...</p>
+      </div>
+    )
+  }
+);
 
 export default function DashboardPage() {
   const { user, isAuthenticated, isLoading: isAuthLoading, login } = useAuth();
@@ -37,6 +52,12 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [communityPosts, setCommunityPosts] = useState(INITIAL_COMMUNITY_POSTS);
   const [swaps, setSwaps] = useState(INITIAL_SUSTAINABLE_SWAPS);
+
+  // GPS Locating Modal & Radar Animation State
+  const [isLocatingModalOpen, setIsLocatingModalOpen] = useState<boolean>(false);
+  const [locatingStep, setLocatingStep] = useState<number>(1);
+  const [locatingCoords, setLocatingCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [locatingCity, setLocatingCity] = useState<string | null>(null);
 
   // Sync user profile city and family members when user logs in
   useEffect(() => {
@@ -93,30 +114,69 @@ export default function DashboardPage() {
     localStorage.setItem('breatheasy_gemini_key', key);
   };
 
-  // Browser GPS Geolocation
+  // Browser GPS Geolocation with Radar Loading Animation & Reverse Geocoding
   const handleGpsLocate = () => {
     if (!navigator.geolocation) {
       alert('Geolocation is not supported by your browser.');
       return;
     }
 
-    setIsLoading(true);
+    setIsLocatingModalOpen(true);
+    setLocatingStep(1);
+    setLocatingCoords(null);
+    setLocatingCity(null);
+
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
-        const data = await fetchLiveAqi('My Location', latitude, longitude);
-        if (data) {
-          setAqiData(data);
-          setSelectedCity(data.city);
+        setLocatingCoords({ lat: latitude, lng: longitude });
+        setLocatingStep(2);
+
+        // Step 2: Reverse-geocode neighborhood or city name
+        let resolvedCityName = `Location (${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E)`;
+        try {
+          const revRes = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+          );
+          if (revRes.ok) {
+            const revData = await revRes.json();
+            const addr = revData.address;
+            const place = addr?.city || addr?.town || addr?.suburb || addr?.village || addr?.county || addr?.state_district || addr?.state;
+            if (place) {
+              resolvedCityName = place;
+            }
+          }
+        } catch (e) {
+          console.log('Reverse geocoding client fallback:', e);
         }
-        setIsLoading(false);
+
+        setLocatingCity(resolvedCityName);
+        setLocatingStep(3);
+
+        // Step 3: Fetch Open-Meteo telemetry from backend
+        const data = await fetchLiveAqi(resolvedCityName, latitude, longitude);
+        if (data) {
+          const finalData = {
+            ...data,
+            city: resolvedCityName,
+            latitude,
+            longitude
+          };
+          setAqiData(finalData);
+          setSelectedCity(resolvedCityName);
+        }
+
+        setLocatingStep(4);
+        setTimeout(() => {
+          setIsLocatingModalOpen(false);
+        }, 1500);
       },
       (err) => {
         console.warn('GPS error:', err.message);
-        alert('Could not retrieve your GPS location. Please select or search your city.');
-        setIsLoading(false);
+        alert('Could not retrieve GPS coordinates. Please ensure location permissions are enabled in your browser.');
+        setIsLocatingModalOpen(false);
       },
-      { timeout: 10000 }
+      { timeout: 12000, enableHighAccuracy: true }
     );
   };
 
@@ -241,6 +301,13 @@ export default function DashboardPage() {
                     <TrendChart aqiData={aqiData} />
                   </div>
                 </div>
+
+                {/* Real-Time Atmospheric Satellite & Dispersion Map */}
+                <RealtimeAqiMap
+                  aqiData={aqiData}
+                  onLocateMe={handleGpsLocate}
+                  isLocating={isLocatingModalOpen}
+                />
 
                 {/* Pollutants Breakdown */}
                 <PollutantCards pollutants={aqiData.pollutants} />
@@ -399,6 +466,21 @@ export default function DashboardPage() {
                 />
               </div>
             )}
+
+            {/* Tab 7: Dedicated Full-Screen Live Atmospheric Map */}
+            {activeTab === 'map' && (
+              <div className="space-y-6 animate-in fade-in duration-300">
+                <RealtimeAqiMap
+                  aqiData={aqiData}
+                  onLocateMe={handleGpsLocate}
+                  isLocating={isLocatingModalOpen}
+                />
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <AqiGauge aqiData={aqiData} />
+                  <PollutantCards pollutants={aqiData.pollutants} />
+                </div>
+              </div>
+            )}
           </>
         )}
       </main>
@@ -416,6 +498,14 @@ export default function DashboardPage() {
         onClose={() => setIsApiKeyModalOpen(false)}
         apiKey={customApiKey}
         onSaveKey={handleSaveApiKey}
+      />
+
+      <GpsLocatingModal
+        isOpen={isLocatingModalOpen}
+        onClose={() => setIsLocatingModalOpen(false)}
+        statusStep={locatingStep}
+        coords={locatingCoords}
+        detectedCity={locatingCity}
       />
 
       {/* Footer */}
