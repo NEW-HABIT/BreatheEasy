@@ -88,8 +88,8 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
                 resolved_country = top_result.get("country", "Global")
             else:
                 latitude, longitude = 28.6139, 77.2090
-                resolved_city = "New Delhi"
-                resolved_country = "India"
+                resolved_city = city or "New Delhi"
+                resolved_country = "Regional Sensor Grid"
         except Exception as e:
             latitude, longitude = 28.6139, 77.2090
             resolved_city = city or "New Delhi"
