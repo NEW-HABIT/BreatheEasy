@@ -133,8 +133,10 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28">
+      {/* Main Landmark */}
+      <main id="main-content" role="main">
+        {/* Hero Section */}
+        <section className="relative overflow-hidden pt-12 pb-20 sm:pt-20 sm:pb-28">
         {/* Soft background ambient green orbs */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-emerald-200/40 blur-[120px] rounded-full pointer-events-none -z-10" />
 
@@ -436,6 +438,7 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+      </main>
 
       {/* Footer */}
       <footer className="mt-auto border-t border-emerald-100 glass-card-strong py-8 text-xs text-slate-500">

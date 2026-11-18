@@ -1,73 +1,63 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-
-// Core AQI categorization logic matching src/lib/aqiData.ts
-function getAqiCategory(aqi) {
-  if (aqi <= 50) return { category: 'Good', color: '#10b981', level: 'safe' };
-  if (aqi <= 100) return { category: 'Moderate', color: '#f59e0b', level: 'moderate' };
-  if (aqi <= 150) return { category: 'Unhealthy for Sensitive Groups', color: '#f97316', level: 'sensitive' };
-  if (aqi <= 200) return { category: 'Unhealthy', color: '#ef4444', level: 'unhealthy' };
-  if (aqi <= 300) return { category: 'Very Unhealthy', color: '#8b5cf6', level: 'very-unhealthy' };
-  return { category: 'Hazardous', color: '#7f1d1d', level: 'hazardous' };
-}
-
-function getPollutantSeverity(pollutant, value) {
-  const whoThresholds = {
-    pm25: 15,
-    pm10: 45,
-    no2: 25,
-    so2: 40,
-    co: 4,
-    o3: 100
-  };
-  const threshold = whoThresholds[pollutant] || 25;
-  const ratio = value / threshold;
-  if (ratio <= 1.0) return 'safe';
-  if (ratio <= 2.0) return 'moderate';
-  if (ratio <= 4.0) return 'high';
-  return 'severe';
-}
-
-function getWhoExceedanceRatio(pm25) {
-  const whoDailyLimit = 15;
-  return Number((pm25 / whoDailyLimit).toFixed(1));
-}
+import { 
+  getAqiCategory, 
+  getPollutantSeverity, 
+  getWhoExceedanceRatio,
+  AQI_LEVELS,
+  CITIES_DATA 
+} from '../src/lib/aqiData.ts';
 
 test('AQI Categorization Scale', async (t) => {
   await t.test('evaluates AQI 35 as Good', () => {
     const res = getAqiCategory(35);
     assert.equal(res.category, 'Good');
-    assert.equal(res.level, 'safe');
+    assert.equal(res.color, AQI_LEVELS.good.color);
   });
 
   await t.test('evaluates AQI 85 as Moderate', () => {
     const res = getAqiCategory(85);
     assert.equal(res.category, 'Moderate');
-    assert.equal(res.level, 'moderate');
+    assert.equal(res.color, AQI_LEVELS.moderate.color);
   });
 
   await t.test('evaluates AQI 140 as Sensitive', () => {
     const res = getAqiCategory(140);
     assert.equal(res.category, 'Unhealthy for Sensitive Groups');
-    assert.equal(res.level, 'sensitive');
+    assert.equal(res.color, AQI_LEVELS.sensitive.color);
   });
 
   await t.test('evaluates AQI 185 as Unhealthy', () => {
     const res = getAqiCategory(185);
     assert.equal(res.category, 'Unhealthy');
-    assert.equal(res.level, 'unhealthy');
+    assert.equal(res.color, AQI_LEVELS.unhealthy.color);
   });
 
   await t.test('evaluates AQI 260 as Very Unhealthy', () => {
     const res = getAqiCategory(260);
     assert.equal(res.category, 'Very Unhealthy');
-    assert.equal(res.level, 'very-unhealthy');
+    assert.equal(res.color, AQI_LEVELS.veryUnhealthy.color);
   });
 
   await t.test('evaluates AQI 420 as Hazardous', () => {
     const res = getAqiCategory(420);
     assert.equal(res.category, 'Hazardous');
-    assert.equal(res.level, 'hazardous');
+    assert.equal(res.color, AQI_LEVELS.hazardous.color);
+  });
+
+  await t.test('handles boundary edge cases gracefully', () => {
+    assert.equal(getAqiCategory(50).category, 'Good');
+    assert.equal(getAqiCategory(51).category, 'Moderate');
+    assert.equal(getAqiCategory(100).category, 'Moderate');
+    assert.equal(getAqiCategory(101).category, 'Unhealthy for Sensitive Groups');
+    assert.equal(getAqiCategory(150).category, 'Unhealthy for Sensitive Groups');
+    assert.equal(getAqiCategory(151).category, 'Unhealthy');
+    assert.equal(getAqiCategory(200).category, 'Unhealthy');
+    assert.equal(getAqiCategory(201).category, 'Very Unhealthy');
+    assert.equal(getAqiCategory(300).category, 'Very Unhealthy');
+    assert.equal(getAqiCategory(301).category, 'Hazardous');
+    assert.equal(getAqiCategory(-5).category, 'Good');
+    assert.equal(getAqiCategory(NaN).category, 'Unhealthy for Sensitive Groups');
   });
 });
 
@@ -83,5 +73,19 @@ test('WHO Pollutant Threshold & Severity Evaluation', async (t) => {
 
   await t.test('NO2 at 35 ppb is moderate', () => {
     assert.equal(getPollutantSeverity('no2', 35), 'moderate');
+  });
+
+  await t.test('SO2 and CO thresholds evaluate correctly', () => {
+    assert.equal(getPollutantSeverity('so2', 20), 'safe');
+    assert.equal(getPollutantSeverity('so2', 90), 'high');
+    assert.equal(getPollutantSeverity('co', 3), 'safe');
+    assert.equal(getPollutantSeverity('o3', 120), 'moderate');
+  });
+
+  await t.test('verifies pre-configured cities dataset has New Delhi severe winter data', () => {
+    assert.ok(CITIES_DATA['New Delhi']);
+    assert.equal(CITIES_DATA['New Delhi'].city, 'New Delhi');
+    assert.ok(CITIES_DATA['New Delhi'].aqi >= 300);
+    assert.equal(CITIES_DATA['New Delhi'].primaryPollutant, 'PM2.5');
   });
 });

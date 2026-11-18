@@ -1,28 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-
-function calculateAdoptedImpact(swaps) {
-  const adopted = swaps.filter(s => s.adopted);
-  const dailyCo2 = adopted.reduce((sum, s) => sum + s.co2SavedKgPerDay, 0);
-  const monthlyCo2 = dailyCo2 * 30;
-  const yearlyCo2 = dailyCo2 * 365;
-
-  const avgPm25 = adopted.length > 0 
-    ? Math.round(adopted.reduce((sum, s) => sum + s.pm25ReductionPercent, 0) / adopted.length)
-    : 0;
-
-  const treesEquivalent = Math.round((yearlyCo2 / 21.77) * 10) / 10;
-  const cleanAirHoursGained = Math.round(adopted.length * 2.8 * 30);
-
-  return {
-    dailyCo2SavedKg: Math.round(dailyCo2 * 10) / 10,
-    monthlyCo2SavedKg: Math.round(monthlyCo2 * 10) / 10,
-    yearlyCo2SavedKg: Math.round(yearlyCo2 * 10) / 10,
-    avgPm25ReductionPercent: avgPm25,
-    treesEquivalent,
-    cleanAirHoursGained
-  };
-}
+import { calculateAdoptedImpact, INITIAL_SUSTAINABLE_SWAPS } from '../src/lib/impactCalculator.ts';
 
 const mockSwaps = [
   { id: '1', title: 'Metro Commute', co2SavedKgPerDay: 4.8, pm25ReductionPercent: 65, adopted: true },

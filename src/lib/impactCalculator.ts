@@ -1,4 +1,4 @@
-import { SustainableSwap } from '@/types';
+import type { SustainableSwap } from '../types';
 
 export const INITIAL_SUSTAINABLE_SWAPS: SustainableSwap[] = [
   {

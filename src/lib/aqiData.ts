@@ -1,4 +1,4 @@
-import { AqiCategory, AqiData, FamilyMember } from '@/types';
+import type { AqiCategory, AqiData, FamilyMember } from '../types';
 
 export const AQI_LEVELS = {
   good: { min: 0, max: 50, label: 'Good' as AqiCategory, color: '#10B981', bg: 'bg-emerald-500/10', text: 'text-emerald-500', border: 'border-emerald-500/30' },
@@ -26,9 +26,39 @@ export function getAqiCategory(aqi: number): {
   return { category: 'Hazardous', ...AQI_LEVELS.hazardous, advice: 'Emergency conditions: severe winter smog. Avoid all outdoor physical activity. Seal entry gaps with damp towels.' };
 }
 
+/**
+ * Evaluates WHO air quality guideline pollutant severity level
+ */
+export function getPollutantSeverity(pollutant: string, value: number): 'safe' | 'moderate' | 'high' | 'severe' {
+  const whoThresholds: Record<string, number> = {
+    pm25: 15,
+    pm10: 45,
+    no2: 25,
+    so2: 40,
+    co: 4,
+    o3: 100
+  };
+  const threshold = whoThresholds[pollutant.toLowerCase()] || 25;
+  const ratio = value / threshold;
+  if (ratio <= 1.0) return 'safe';
+  if (ratio <= 2.0) return 'moderate';
+  if (ratio <= 4.0) return 'high';
+  return 'severe';
+}
+
+/**
+ * Calculates exceedance ratio against WHO 24-hour PM2.5 threshold (15 ug/m3)
+ */
+export function getWhoExceedanceRatio(pm25: number): number {
+  const whoDailyLimit = 15;
+  if (pm25 <= 0) return 0;
+  return Number((pm25 / whoDailyLimit).toFixed(1));
+}
+
 export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
   riskLevel: 'Low' | 'Moderate' | 'High' | 'Severe';
   advice: string[];
+  hasAlert: boolean;
 } {
   const safeAqi = typeof aqi === 'number' && !isNaN(aqi) ? aqi : 150;
   const memberAge = typeof member.age === 'number' ? member.age : 30;
@@ -48,6 +78,7 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
     if (hasRespiratoryIssues || isVulnerableAge) {
       return {
         riskLevel: 'Severe',
+        hasAlert: true,
         advice: [
           'Strictly no outdoor exposure. Peak winter smog will trigger acute airway inflammation.',
           'Keep rescue inhaler / prescribed medications immediately accessible.',
@@ -58,16 +89,18 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
     }
     return {
       riskLevel: 'High',
+      hasAlert: true,
       advice: [
         'Avoid outdoor runs or cardio workouts completely.',
         'Wear certified tight-fitting N95/FFP2 mask if commuting.',
         'Keep vehicle AC strictly on recirculate mode.'
       ]
     };
-  } else if (aqi > 150) {
+  } else if (safeAqi > 150) {
     if (hasRespiratoryIssues || isVulnerableAge) {
       return {
         riskLevel: 'High',
+        hasAlert: true,
         advice: [
           'Stay indoors during early morning and late evening inversion layers.',
           'Run DIY or HEPA filtration in main living area.',
@@ -77,15 +110,17 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
     }
     return {
       riskLevel: 'Moderate',
+      hasAlert: false,
       advice: [
         'Limit prolonged outdoor heavy labor or strenuous jogging.',
         'Close road-facing windows between 7 AM - 10 AM.'
       ]
     };
-  } else if (aqi > 100) {
-    if (hasRespiratoryIssues) {
+  } else if (safeAqi > 100) {
+    if (hasRespiratoryIssues || isVulnerableAge) {
       return {
         riskLevel: 'Moderate',
+        hasAlert: false,
         advice: [
           'Monitor mild coughing or eye irritation symptoms.',
           'Avoid lingering near heavy-traffic corridors.'
@@ -94,12 +129,14 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
     }
     return {
       riskLevel: 'Low',
+      hasAlert: false,
       advice: ['Normal activities permitted with mindful ventilation timing.']
     };
   }
 
   return {
     riskLevel: 'Low',
+    hasAlert: false,
     advice: ['Air conditions are optimal. Safe for all family activities.']
   };
 }

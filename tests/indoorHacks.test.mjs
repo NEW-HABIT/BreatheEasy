@@ -1,30 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-
-// Engineering models for indoor air quality hacks
-function calculateCadrEquivalent(fanCfm, filterEfficiency) {
-  return Math.round(fanCfm * filterEfficiency);
-}
-
-function calculateIndoorExposure(outdoorPm25, penetrationFactor, hasPurifier) {
-  let indoorConcentration = outdoorPm25 * penetrationFactor;
-  if (hasPurifier) {
-    indoorConcentration *= 0.22; // 78% reduction via HEPA / MERV-13 Corsi-Rosenthal
-  }
-  return Math.round(indoorConcentration * 10) / 10;
-}
-
-function evaluateDiurnalWindowSafety(hour, aqi) {
-  // Peak winter smog inversion hours: 6 AM - 10 AM & 7 PM - 11 PM
-  const isGroundInversionPeak = (hour >= 6 && hour <= 10) || (hour >= 19 && hour <= 23);
-  if (isGroundInversionPeak && aqi > 200) {
-    return { safeToVentilate: false, recommendation: 'Keep windows strictly sealed' };
-  }
-  if (hour >= 13 && hour <= 15) {
-    return { safeToVentilate: true, recommendation: 'Solar boundary layer active. Safe for 15-min cross-ventilation' };
-  }
-  return { safeToVentilate: aqi < 150, recommendation: 'Check local sensor before opening windows' };
-}
+import { 
+  calculateCadrEquivalent, 
+  calculateIndoorExposure, 
+  evaluateDiurnalWindowSafety,
+  calculateAirChangesPerHour
+} from '../src/lib/iaqEngineering.ts';
 
 test('Indoor Air Quality (IAQ) Engineering Blueprints', async (t) => {
   await t.test('Corsi-Rosenthal box fan delivers 480+ CFM CADR matching $600 appliances', () => {
@@ -52,5 +33,28 @@ test('Indoor Air Quality (IAQ) Engineering Blueprints', async (t) => {
     // At 2:00 PM (solar boundary layer heating and convection)
     const afternoon = evaluateDiurnalWindowSafety(14, 320);
     assert.equal(afternoon.safeToVentilate, true);
+
+    // Midday hour 12 with moderate AQI (120)
+    const middayModerate = evaluateDiurnalWindowSafety(12, 120);
+    assert.equal(middayModerate.safeToVentilate, true);
+
+    // Midday hour 12 with elevated AQI (180)
+    const middayHigh = evaluateDiurnalWindowSafety(12, 180);
+    assert.equal(middayHigh.safeToVentilate, false);
+  });
+
+  await t.test('calculates air changes per hour (ACH) for residential rooms', () => {
+    // Standard 15ft x 12ft room with 9ft ceiling = 1620 cu.ft.
+    // CADR of 250 CFM
+    const ach = calculateAirChangesPerHour(250, 15, 12, 9);
+    // (250 * 60) / 1620 = 9.25 ACH (exceeds hospital grade 6 ACH)
+    assert.ok(ach >= 6.0);
+    assert.equal(ach, 9.3);
+  });
+
+  await t.test('handles boundary zero/negative inputs safely', () => {
+    assert.equal(calculateCadrEquivalent(0, 0.8), 0);
+    assert.equal(calculateIndoorExposure(0, 0.55, false), 0);
+    assert.equal(calculateAirChangesPerHour(0, 10, 10, 8), 0);
   });
 });

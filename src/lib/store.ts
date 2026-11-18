@@ -1,5 +1,4 @@
-import { FamilyMember, UserProfile, SustainableSwap, CommunityPost, RoutineItem } from '@/types';
-import { INITIAL_SUSTAINABLE_SWAPS } from './impactCalculator';
+import type { FamilyMember, UserProfile, SustainableSwap, CommunityPost, RoutineItem } from '../types';
 
 export const DEFAULT_FAMILY_MEMBERS: FamilyMember[] = [
   {

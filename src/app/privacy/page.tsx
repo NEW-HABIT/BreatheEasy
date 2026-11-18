@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
+      <main id="main-content" role="main" className="max-w-4xl mx-auto px-4 sm:px-6 py-12 space-y-8">
         <div className="text-center space-y-2">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
             Privacy First Architecture

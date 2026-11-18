@@ -1,65 +1,74 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-
-function getFamilyVulnerability(member, aqi) {
-  const safeAqi = typeof aqi === 'number' && !isNaN(aqi) ? aqi : 150;
-  const memberAge = typeof member.age === 'number' ? member.age : 30;
-  const isVulnerableAge = memberAge < 12 || memberAge > 60;
-
-  const conditions = Array.isArray(member.healthConditions)
-    ? member.healthConditions
-    : typeof member.healthConditions === 'string'
-    ? member.healthConditions.split(',').map(s => s.trim()).filter(Boolean)
-    : [];
-
-  const hasRespiratoryIssues = conditions.some(c => 
-    typeof c === 'string' && ['asthma', 'bronchitis', 'allergies', 'cardiovascular', 'copd', 'wheezing', 'hypertension', 'sensitivity'].some(term => c.toLowerCase().includes(term))
-  );
-
-  if (safeAqi > 250) {
-    if (hasRespiratoryIssues || isVulnerableAge) {
-      return { riskLevel: 'Severe', hasAlert: true };
-    }
-    return { riskLevel: 'High', hasAlert: true };
-  } else if (safeAqi > 150) {
-    if (hasRespiratoryIssues || isVulnerableAge) {
-      return { riskLevel: 'High', hasAlert: true };
-    }
-    return { riskLevel: 'Moderate', hasAlert: false };
-  } else if (safeAqi > 100) {
-    if (hasRespiratoryIssues || isVulnerableAge) {
-      return { riskLevel: 'Moderate', hasAlert: false };
-    }
-    return { riskLevel: 'Low', hasAlert: false };
-  } else {
-    return { riskLevel: 'Low', hasAlert: false };
-  }
-}
+import { calculateFamilyRisk } from '../src/lib/aqiData.ts';
 
 test('Family Member Health Risk Categorization', async (t) => {
   await t.test('6-year-old child with asthma in severe smog (AQI 320) is Severe', () => {
-    const child = { name: 'Arya', role: 'Child', age: 6, healthConditions: ['Asthma'] };
-    const res = getFamilyVulnerability(child, 320);
+    const child = { id: 'fam-child', name: 'Arya', role: 'Child', age: 6, healthConditions: ['Asthma'] };
+    const res = calculateFamilyRisk(child, 320);
     assert.equal(res.riskLevel, 'Severe');
     assert.equal(res.hasAlert, true);
+    assert.ok(res.advice.length >= 2);
   });
 
   await t.test('68-year-old elder with hypertension in high smog (AQI 180) is High', () => {
-    const elder = { name: 'Sushila', role: 'Elderly', age: 68, healthConditions: ['Hypertension'] };
-    const res = getFamilyVulnerability(elder, 180);
+    const elder = { id: 'fam-elder', name: 'Sushila', role: 'Elderly', age: 68, healthConditions: ['Hypertension'] };
+    const res = calculateFamilyRisk(elder, 180);
     assert.equal(res.riskLevel, 'High');
+    assert.equal(res.hasAlert, true);
   });
 
   await t.test('35-year-old healthy adult in moderate air (AQI 90) is Low', () => {
-    const adult = { name: 'Rajesh', role: 'Self', age: 35, healthConditions: [] };
-    const res = getFamilyVulnerability(adult, 90);
+    const adult = { id: 'fam-adult', name: 'Rajesh', role: 'Self', age: 35, healthConditions: [] };
+    const res = calculateFamilyRisk(adult, 90);
     assert.equal(res.riskLevel, 'Low');
     assert.equal(res.hasAlert, false);
   });
 
+  await t.test('30-year-old healthy adult in severe smog (AQI 280) is High', () => {
+    const adult = { id: 'fam-adult-2', name: 'Vikram', role: 'Self', age: 30, healthConditions: [] };
+    const res = calculateFamilyRisk(adult, 280);
+    assert.equal(res.riskLevel, 'High');
+    assert.equal(res.hasAlert, true);
+    assert.ok(res.advice.some(a => a.includes('N95')));
+  });
+
+  await t.test('30-year-old healthy adult in unhealthy smog (AQI 170) is Moderate', () => {
+    const adult = { id: 'fam-adult-3', name: 'Vikram', role: 'Self', age: 30, healthConditions: [] };
+    const res = calculateFamilyRisk(adult, 170);
+    assert.equal(res.riskLevel, 'Moderate');
+    assert.equal(res.hasAlert, false);
+  });
+
   await t.test('handles string-based health conditions properly', () => {
-    const member = { name: 'Priya', role: 'Spouse', age: 34, healthConditions: 'Seasonal Wheezing, Allergies' };
-    const res = getFamilyVulnerability(member, 280);
+    const stringConditionMember = {
+      id: 'fam-str',
+      name: 'Priya',
+      role: 'Spouse',
+      age: 34,
+      healthConditions: 'Wheezing, seasonal allergies'
+    };
+    const res = calculateFamilyRisk(stringConditionMember, 280);
     assert.equal(res.riskLevel, 'Severe');
+    assert.equal(res.hasAlert, true);
+  });
+
+  await t.test('handles moderate smog for vulnerable vs non-vulnerable adults', () => {
+    const vulnerable = { id: 'v1', name: 'Elder', role: 'Elderly', age: 72, healthConditions: [] };
+    const healthy = { id: 'h1', name: 'Adult', role: 'Self', age: 28, healthConditions: [] };
+    
+    const vRes = calculateFamilyRisk(vulnerable, 120);
+    const hRes = calculateFamilyRisk(healthy, 120);
+    
+    assert.equal(vRes.riskLevel, 'Moderate');
+    assert.equal(hRes.riskLevel, 'Low');
+  });
+
+  await t.test('optimal clean air evaluates as Low risk with celebratory advice', () => {
+    const member = { id: 'clean', name: 'Child', role: 'Child', age: 8, healthConditions: ['Asthma'] };
+    const res = calculateFamilyRisk(member, 40);
+    assert.equal(res.riskLevel, 'Low');
+    assert.equal(res.hasAlert, false);
+    assert.ok(res.advice[0].includes('optimal'));
   });
 });

@@ -18,13 +18,27 @@ engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-def hash_password(password: str) -> str:
-    """Hash a password using salted SHA-256."""
-    salt = "breatheasy_salt_2026"
-    return hashlib.sha256((salt + password).encode('utf-8')).hexdigest()
+from typing import Optional
+
+def hash_password(password: str, salt: Optional[str] = None) -> str:
+    """Hash a password using industry-standard PBKDF2-HMAC-SHA256 with 100,000 iterations (OWASP standard)."""
+    if not salt:
+        salt = secrets.token_hex(16)
+    key = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000)
+    return f"{salt}${key.hex()}"
 
 def verify_password(password: str, hashed: str) -> bool:
-    return hash_password(password) == hashed
+    """Verifies a password against the PBKDF2 hash using constant-time comparison to prevent timing attacks."""
+    if not hashed:
+        return False
+    if "$" in hashed:
+        salt, key_hex = hashed.split("$", 1)
+        calculated = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt.encode('utf-8'), 100000).hex()
+        return secrets.compare_digest(calculated, key_hex)
+    # Constant-time comparison backwards compatibility fallback
+    legacy_salt = "breatheasy_salt_2026"
+    legacy_hash = hashlib.sha256((legacy_salt + password).encode('utf-8')).hexdigest()
+    return secrets.compare_digest(legacy_hash, hashed)
 
 class UserModel(Base):
     __tablename__ = "users"
