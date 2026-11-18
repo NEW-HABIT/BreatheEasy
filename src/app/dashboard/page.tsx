@@ -362,38 +362,38 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                   <div
                     onClick={() => setActiveTab('routine')}
-                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/80"
+                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/90"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-emerald-700 uppercase">Phase 1</span>
+                      <span className="text-[10px] font-extrabold text-emerald-800 uppercase tracking-wider bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">Step 1</span>
                       <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-emerald-600 group-hover:translate-x-1 transition" />
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">Daily Diurnal Routine</h4>
-                    <p className="text-xs text-slate-500 mt-1">Safe morning, commute, and ventilation hours.</p>
+                    <h4 className="text-sm font-extrabold text-slate-900 mt-2">Daily Schedule & Fresh Air</h4>
+                    <p className="text-xs text-slate-500 mt-1">Best hours for exercise, commuting, and airing out your home.</p>
                   </div>
 
                   <div
                     onClick={() => setActiveTab('swaps')}
-                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/80"
+                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/90"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-teal-700 uppercase">Phase 2</span>
+                      <span className="text-[10px] font-extrabold text-teal-800 uppercase tracking-wider bg-teal-50 px-2 py-0.5 rounded-md border border-teal-100">Step 2</span>
                       <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-teal-600 group-hover:translate-x-1 transition" />
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">Sustainable Swaps</h4>
-                    <p className="text-xs text-slate-500 mt-1">Track daily CO₂ and PM2.5 savings with instant calculations.</p>
+                    <h4 className="text-sm font-extrabold text-slate-900 mt-2">Healthy Eco Habits</h4>
+                    <p className="text-xs text-slate-500 mt-1">Simple lifestyle switches that save money and cut neighborhood smoke.</p>
                   </div>
 
                   <div
                     onClick={() => setActiveTab('hacks')}
-                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/80"
+                    className="glass-card p-4.5 rounded-2xl cursor-pointer hover:shadow-md transition group border border-white/90"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-green-700 uppercase">Phase 3</span>
+                      <span className="text-[10px] font-extrabold text-green-800 uppercase tracking-wider bg-green-50 px-2 py-0.5 rounded-md border border-green-100">Step 3</span>
                       <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-green-600 group-hover:translate-x-1 transition" />
                     </div>
-                    <h4 className="text-sm font-bold text-slate-900 mt-1">Indoor IAQ Hacks</h4>
-                    <p className="text-xs text-slate-500 mt-1">DIY Corsi-Rosenthal purifiers, door seals, and botanical filters.</p>
+                    <h4 className="text-sm font-extrabold text-slate-900 mt-2">Home Air Cleaners</h4>
+                    <p className="text-xs text-slate-500 mt-1">Budget-friendly DIY purifiers, draft seals, and purifying plants.</p>
                   </div>
                 </div>
               </div>

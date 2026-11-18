@@ -22,21 +22,21 @@ export const TrendChart: React.FC<TrendChartProps> = ({ aqiData }) => {
   const [viewMode, setViewMode] = useState<'hourly' | 'weekly'>('hourly');
 
   return (
-    <div className="glass-card-strong rounded-3xl p-6 shadow-xl flex flex-col justify-between h-full border border-white/80">
+    <div className="glass-card-strong rounded-3xl p-6 shadow-xl flex flex-col justify-between h-full border border-white/90">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <div className="flex items-center space-x-2">
             <TrendingUp className="h-4 w-4 text-emerald-600" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-              Boundary Layer Inversion & Forecast
+            <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800">
+              Today&apos;s Air Flow & Forecast
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Diurnal inversion spikes typically occur at early morning and nightfall.
+            Air is typically freshest around afternoon sunshine and hazier in late evening.
           </p>
         </div>
 
-        <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl self-start sm:self-auto border border-slate-200">
+        <div className="flex items-center space-x-1 bg-slate-100/90 p-1 rounded-xl self-start sm:self-auto border border-slate-200/70">
           <button
             onClick={() => setViewMode('hourly')}
             className={`px-3 py-1 rounded-lg text-xs font-bold transition ${
@@ -45,7 +45,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ aqiData }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            24h Diurnal Curve
+            Today&apos;s Hours
           </button>
           <button
             onClick={() => setViewMode('weekly')}
@@ -55,7 +55,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ aqiData }) => {
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            7-Day Outlook
+            7-Day Week
           </button>
         </div>
       </div>

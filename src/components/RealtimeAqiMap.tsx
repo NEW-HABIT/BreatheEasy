@@ -222,18 +222,18 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="p-1.5 rounded-xl bg-emerald-100 text-emerald-700">
+            <span className="p-1.5 rounded-xl bg-emerald-100 text-emerald-800">
               <Radio className="h-4 w-4 animate-pulse" />
             </span>
             <h3 className="text-sm font-extrabold text-slate-900 tracking-tight flex items-center space-x-1.5">
-              <span>Real-Time Atmospheric Satellite & Dispersion Map</span>
+              <span>Live Air & Neighborhood Map</span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                Live Open-Meteo
+                Live
               </span>
             </h3>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Real-time urban telemetry centered at <strong className="text-slate-800">{aqiData.city}</strong> (Lat {lat.toFixed(2)}°, Lon {lng.toFixed(2)}°)
+            Showing real-time air quality around <strong className="text-slate-800">{aqiData.city}</strong>
           </p>
         </div>
 
@@ -292,14 +292,14 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
 
         {/* Top-Right Layer HUD Pill */}
         <div className="absolute top-3 right-3 z-20 glass-card-strong rounded-2xl p-2 shadow-lg border border-white flex flex-col space-y-1.5 text-[11px]">
-          <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1">Layers</span>
+          <span className="text-[10px] font-extrabold uppercase text-slate-400 px-1">Map View</span>
           
           <button
             onClick={() => setActiveLayers(p => ({ ...p, plume: !p.plume }))}
             className={`flex items-center space-x-1.5 px-2 py-1 rounded-lg font-bold transition text-left ${activeLayers.plume ? 'bg-emerald-100/80 text-emerald-900 border border-emerald-200' : 'text-slate-500 hover:bg-slate-100'}`}
           >
             <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cat.color }} />
-            <span>Smog Radius</span>
+            <span>Air Cloud</span>
           </button>
 
           <button
@@ -307,7 +307,7 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
             className={`flex items-center space-x-1.5 px-2 py-1 rounded-lg font-bold transition text-left ${activeLayers.stations ? 'bg-emerald-100/80 text-emerald-900 border border-emerald-200' : 'text-slate-500 hover:bg-slate-100'}`}
           >
             <Activity className="h-3 w-3 text-emerald-600" />
-            <span>Micro-Sensors</span>
+            <span>Local Monitors</span>
           </button>
 
           <button
@@ -315,7 +315,7 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
             className={`flex items-center space-x-1.5 px-2 py-1 rounded-lg font-bold transition text-left ${activeLayers.shelters ? 'bg-emerald-100/80 text-emerald-900 border border-emerald-200' : 'text-slate-500 hover:bg-slate-100'}`}
           >
             <ShieldCheck className="h-3 w-3 text-teal-600" />
-            <span>Clean Shelters</span>
+            <span>Clean Air Spaces</span>
           </button>
         </div>
 
@@ -324,7 +324,7 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
           <div className="flex items-center space-x-1.5">
             <Wind className="h-4 w-4 text-emerald-600" />
             <div>
-              <span className="text-[10px] text-slate-400 block font-semibold leading-none">Wind Velocity</span>
+              <span className="text-[10px] text-slate-400 block font-semibold leading-none">Breeze</span>
               <span className="text-xs font-bold text-slate-800">{aqiData.windSpeed} km/h</span>
             </div>
           </div>
@@ -332,8 +332,8 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
           <div className="h-6 w-px bg-slate-200" />
 
           <div>
-            <span className="text-[10px] text-slate-400 block font-semibold leading-none">PM2.5 Plume</span>
-            <span className="text-xs font-bold text-slate-800">{aqiData.pollutants.pm25} µg/m³</span>
+            <span className="text-[10px] text-slate-400 block font-semibold leading-none">Air Score</span>
+            <span className="text-xs font-bold text-slate-800">AQI {aqiData.aqi}</span>
           </div>
 
           <div className="h-6 w-px bg-slate-200" />
@@ -348,16 +348,16 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
 
       </div>
 
-      {/* AQI Dispersion Scale Legend */}
+      {/* AQI Scale Guide */}
       <div className="pt-2 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-2">
-        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Atmospheric Severity Spectrum:</span>
+        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider">Air Quality Guide:</span>
         <div className="flex items-center space-x-1 text-[10px] font-extrabold">
-          <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200">0-50 Good</span>
-          <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">51-100 Moderate</span>
+          <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 border border-emerald-200">0-50 Clean</span>
+          <span className="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200">51-100 Fair</span>
           <span className="px-2 py-0.5 rounded-md bg-orange-100 text-orange-800 border border-orange-200">101-150 Sensitive</span>
-          <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200">151-200 Unhealthy</span>
-          <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 border border-purple-200">201-300 Very Unhealthy</span>
-          <span className="px-2 py-0.5 rounded-md bg-red-100 text-red-900 border border-red-200">301+ Hazardous</span>
+          <span className="px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 border border-rose-200">151-200 Hazy</span>
+          <span className="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 border border-purple-200">201-300 Smoggy</span>
+          <span className="px-2 py-0.5 rounded-md bg-red-100 text-red-900 border border-red-200">301+ Heavy Smog</span>
         </div>
       </div>
 

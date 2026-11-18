@@ -24,15 +24,15 @@ export const AiAdvisorChat: React.FC<AiAdvisorChatProps> = ({
     {
       id: 'msg-init',
       role: 'assistant',
-      content: `👋 Hello! I am **BreatheEasy AI**, your personalized urban air quality & environmental epidemiology advisor.
+      content: `👋 Hello! I am your gentle **FreshAir Assistant**. I'm here to help you and your family breathe easier, stay comfortable, and make simple, healthy choices every day.
 
-I am actively tracking real-time conditions for **${aqiData.city}** (AQI: **${aqiData.aqi} - ${aqiData.category}**) with PM2.5 at **${aqiData.pollutants.pm25} µg/m³**, calibrated for your family members: ${familyMembers.map(m => `**${m.name}** (${m.role}, ${m.age}y)`).join(', ')}.
+I'm currently looking at live conditions for **${aqiData.city}** (Air Quality: **${aqiData.aqi} - ${aqiData.category}**), personalized for: ${familyMembers.map(m => `**${m.name}** (${m.role})`).join(', ')}.
 
-Ask me anything about:
-- **Emergency protocols** for children or seniors with respiratory symptoms
-- **Low-cost DIY indoor air purification hacks** (e.g., Corsi-Rosenthal boxes)
-- **Low-emission commute alternatives** and their exact carbon & PM2.5 savings
-- **Safe outdoor & ventilation windows** today`,
+Feel free to ask me anything:
+- **Best time for an outdoor walk or playtime** today
+- **Simple ways to keep dust and smoke out** of your rooms
+- **How to protect kids or elders** from coughing or eye irritation
+- **Easy green habits** that freshen your home and save money`,
       timestamp: 'Just now'
     }
   ]);
@@ -103,10 +103,10 @@ Ask me anything about:
   }, [externalPrompt]);
 
   const suggestionPills = [
-    `Child asthma plan for ${aqiData.city} smog`,
-    'Step-by-step DIY box fan air purifier hack',
-    'Low-emission commute & carbon impact',
-    'Is it safe to jog outside today?'
+    `Best outdoor walk time in ${aqiData.city} today`,
+    'Simple ways to keep bedroom air fresh',
+    'Care tips for kids and elders today',
+    'Easy home habits to cut smoke & dust'
   ];
 
   return (
@@ -121,20 +121,20 @@ Ask me anything about:
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-bold text-slate-900">BreatheEasy GenAI Advisor</h3>
+              <h3 className="text-sm font-bold text-slate-900">FreshAir Family Assistant</h3>
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-bold">
-                ● Live Context Active
+                ● Live & Ready
               </span>
             </div>
             <p className="text-[11px] text-slate-500">
-              Injected: {aqiData.city} (AQI {aqiData.aqi}) • {familyMembers.length} Family Profiles
+              Personalized for {aqiData.city} (Air {aqiData.aqi}) • {familyMembers.length} Family Members
             </p>
           </div>
         </div>
 
         <div className="hidden sm:flex items-center space-x-1.5 text-xs text-slate-500 font-medium">
           <ShieldCheck className="h-4 w-4 text-emerald-600" />
-          <span>Science-Backed Protocols</span>
+          <span>Helpful Daily Guidance</span>
         </div>
       </div>
 
@@ -214,7 +214,7 @@ Ask me anything about:
             </div>
             <div className="glass-card rounded-2xl p-4 text-xs text-slate-600 flex items-center space-x-2">
               <Loader2 className="h-4 w-4 animate-spin text-emerald-600" />
-              <span>Analyzing live atmospheric sensors & calculating clinical advice...</span>
+              <span>Thinking and preparing clear advice for your family...</span>
             </div>
           </div>
         )}
@@ -232,7 +232,7 @@ Ask me anything about:
         >
           <input
             type="text"
-            placeholder={`Ask BreatheEasy AI about ${aqiData.city} smog, pediatric asthma, or IAQ hacks...`}
+            placeholder={`Ask about air quality in ${aqiData.city}, fresh air windows, or family tips...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}

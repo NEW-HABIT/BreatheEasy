@@ -48,21 +48,21 @@ export const FamilyRiskCards: React.FC<FamilyRiskCardsProps> = ({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center space-x-2">
-            <HeartPulse className="h-4 w-4 text-rose-500" />
-            <span>Family Health Shield & Clinical Protocols</span>
+          <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-800 flex items-center space-x-2">
+            <HeartPulse className="h-4 w-4 text-emerald-600" />
+            <span>Family Care & Daily Health Safety</span>
           </h3>
           <p className="text-xs text-slate-500 mt-0.5">
-            Personalized protocols based on physiological lung development and respiratory sensitivity.
+            Personalized guidance calibrated for everyone in your household today.
           </p>
         </div>
 
         <button
           onClick={onOpenFamilyModal}
-          className="flex items-center space-x-1.5 text-xs text-emerald-700 hover:text-emerald-800 font-bold bg-emerald-100/80 hover:bg-emerald-200/80 px-3 py-1.5 rounded-xl border border-emerald-200 transition"
+          className="flex items-center space-x-1.5 text-xs text-emerald-800 hover:text-emerald-900 font-bold bg-emerald-100/80 hover:bg-emerald-200/80 px-3 py-1.5 rounded-xl border border-emerald-200 transition shadow-sm"
         >
           <PlusCircle className="h-3.5 w-3.5" />
-          <span>Manage Family</span>
+          <span>Edit Household</span>
         </button>
       </div>
 
@@ -127,7 +127,7 @@ export const FamilyRiskCards: React.FC<FamilyRiskCardsProps> = ({
                 className="mt-3.5 w-full py-1.5 px-2.5 rounded-xl bg-white hover:bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-bold transition flex items-center justify-center space-x-1 shadow-sm"
               >
                 <Sparkles className="h-3 w-3 text-emerald-600" />
-                <span>Ask AI for {member.name}</span>
+                <span>Personal Care for {member.name}</span>
               </button>
             </div>
           );

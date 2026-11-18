@@ -64,23 +64,23 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
       <div className="glass-card-strong rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/80">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="text-emerald-700 font-extrabold uppercase text-xs tracking-wider">AI Diurnal Schedule</span>
+            <span className="text-emerald-700 font-extrabold uppercase text-xs tracking-wider">Your Daily Plan</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200">
-              Calibrated for {aqiData.city} (AQI {aqiData.aqi})
+              Personalized for {aqiData.city} (AQI {aqiData.aqi})
             </span>
           </div>
           <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
-            Smog-Resilient & Low-Emission Daily Routine
+            Healthy Daily Routine & Best Air Windows
           </h2>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            Synchronized with solar boundary layer atmospheric mixing. Shifts exposure chores away from high ground-level pollution spikes.
+            Timed for the cleanest hours today. Helps you plan outdoor walks, room airing, and healthy habits when the air is fresh.
           </p>
         </div>
 
         <div className="flex items-center space-x-3 shrink-0">
           <div className="text-right hidden sm:block">
-            <span className="text-xs text-slate-400 block font-medium">Daily Completion</span>
-            <span className="text-sm font-extrabold text-emerald-800">{completedCount} of {routine.length} Actions</span>
+            <span className="text-xs text-slate-400 block font-medium">Daily Progress</span>
+            <span className="text-sm font-extrabold text-emerald-800">{completedCount} of {routine.length} Steps Done</span>
           </div>
 
           <button
@@ -89,7 +89,7 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
             className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
-            <span>{isGenerating ? 'Synthesizing...' : 'Re-optimize with AI'}</span>
+            <span>{isGenerating ? 'Updating Plan...' : 'Refresh Plan'}</span>
           </button>
         </div>
       </div>
@@ -138,7 +138,7 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
                       </span>
                     ) : null}
                     <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${getSafetyBadge(item.airSafetyRating)}`}>
-                      {item.airSafetyRating} Outdoor Risk
+                      {item.airSafetyRating === 'Dangerous' ? 'Stay Indoors' : item.airSafetyRating === 'Caution' ? 'Mask Advised' : 'Good Outside'}
                     </span>
                   </div>
                 </div>

@@ -27,14 +27,14 @@ export const SustainableSwaps: React.FC<SustainableSwapsProps> = ({ initialSwaps
             <div className="flex items-center space-x-2">
               <Award className="h-5 w-5 text-emerald-600" />
               <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                Quantified Impact Engine
+                Eco Habits & Clean Home Impact
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
-              Your Household&apos;s Clean Air & Decarbonization Footprint
+              Your Family&apos;s Clean Air & Green Footprint
             </h2>
             <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-              Calculated using EPA emission factors and peer-reviewed indoor aerosol science. Toggle lifestyle swaps below to see your direct impact.
+              Every small daily action keeps your home air purer and reduces smoke and waste in our neighborhood.
             </p>
           </div>
 
@@ -47,39 +47,39 @@ export const SustainableSwaps: React.FC<SustainableSwapsProps> = ({ initialSwaps
         {/* 4 Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 pt-5">
           <div className="glass-card p-4 rounded-2xl flex flex-col justify-between border border-white/80">
-            <span className="text-xs font-semibold text-slate-500">Daily Carbon Offset</span>
+            <span className="text-xs font-semibold text-slate-500">Emissions Prevented</span>
             <div className="mt-2 flex items-baseline space-x-1.5">
               <span className="text-3xl font-black text-emerald-700">{impact.dailyCo2SavedKg}</span>
-              <span className="text-xs text-slate-500 font-semibold">kg CO₂/day</span>
+              <span className="text-xs text-slate-500 font-semibold">kg/day</span>
             </div>
             <span className="text-[11px] text-slate-400 mt-1 font-medium">({impact.monthlyCo2SavedKg} kg / month)</span>
           </div>
 
           <div className="glass-card p-4 rounded-2xl flex flex-col justify-between border border-white/80">
-            <span className="text-xs font-semibold text-slate-500">Avg Inhaled PM2.5 Cut</span>
+            <span className="text-xs font-semibold text-slate-500">Cleaner Home Air</span>
             <div className="mt-2 flex items-baseline space-x-1.5">
-              <span className="text-3xl font-black text-teal-700">{impact.avgPm25ReductionPercent}%</span>
-              <span className="text-xs text-slate-500 font-semibold">cleaner air</span>
+              <span className="text-3xl font-black text-teal-700">+{impact.avgPm25ReductionPercent}%</span>
+              <span className="text-xs text-slate-500 font-semibold">fresher</span>
             </div>
-            <span className="text-[11px] text-slate-400 mt-1 font-medium">Across living zones</span>
+            <span className="text-[11px] text-slate-400 mt-1 font-medium">Across your rooms</span>
           </div>
 
           <div className="glass-card p-4 rounded-2xl flex flex-col justify-between border border-white/80">
-            <span className="text-xs font-semibold text-slate-500">Tree Carbon Absorption</span>
+            <span className="text-xs font-semibold text-slate-500">Green Trees Impact</span>
             <div className="mt-2 flex items-baseline space-x-1.5">
               <span className="text-3xl font-black text-green-700">{impact.treesEquivalent}</span>
-              <span className="text-xs text-slate-500 font-semibold">mature trees</span>
+              <span className="text-xs text-slate-500 font-semibold">trees</span>
             </div>
-            <span className="text-[11px] text-slate-400 mt-1 font-medium">Absorbing CO₂ yearly</span>
+            <span className="text-[11px] text-slate-400 mt-1 font-medium">Equal forest absorption</span>
           </div>
 
           <div className="glass-card p-4 rounded-2xl flex flex-col justify-between border border-white/80">
-            <span className="text-xs font-semibold text-slate-500">Clean Air Hours</span>
+            <span className="text-xs font-semibold text-slate-500">Fresh Air Hours</span>
             <div className="mt-2 flex items-baseline space-x-1.5">
               <span className="text-3xl font-black text-emerald-800">{impact.cleanAirHoursGained}</span>
               <span className="text-xs text-slate-500 font-semibold">hrs/month</span>
             </div>
-            <span className="text-[11px] text-slate-400 mt-1 font-medium">Shielded from peak smog</span>
+            <span className="text-[11px] text-slate-400 mt-1 font-medium">Protected indoor comfort</span>
           </div>
         </div>
       </div>
@@ -87,7 +87,7 @@ export const SustainableSwaps: React.FC<SustainableSwapsProps> = ({ initialSwaps
       {/* Interactive Swaps Cards */}
       <div className="space-y-3">
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-          Targeted Sustainable Swaps & Impact Explanations
+          Everyday Habits for Fresh Air & Sustainability
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

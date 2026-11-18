@@ -46,11 +46,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const navItems = [
     { id: 'dashboard', label: 'Overview', icon: Wind },
     { id: 'map', label: 'Live Map', icon: MapPin },
-    { id: 'routine', label: 'Diurnal Routine', icon: Calendar },
-    { id: 'swaps', label: 'Eco Swaps', icon: ArrowLeftRight },
-    { id: 'hacks', label: 'IAQ Hacks', icon: ShieldAlert },
+    { id: 'routine', label: 'Daily Plan', icon: Calendar },
+    { id: 'swaps', label: 'Eco Habits', icon: ArrowLeftRight },
+    { id: 'hacks', label: 'Home Tips', icon: ShieldAlert },
     { id: 'community', label: 'Community', icon: HeartHandshake },
-    { id: 'advisor', label: 'GenAI Shield', icon: Sparkles },
+    { id: 'advisor', label: 'AI Assistant', icon: Sparkles },
   ];
 
   const popularCities = ['New Delhi', 'Lahore', 'Mumbai', 'Beijing', 'London', 'New York', 'Dhaka', 'Kolkata', 'Paris', 'Tokyo'];

@@ -27,18 +27,18 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({ aqiData, onAskAI }) =>
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
+              <span className={`text-[11px] font-extrabold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
                 isEmergency ? 'bg-rose-100 text-rose-800 border-rose-200' : 'bg-amber-100 text-amber-800 border-amber-200'
               }`}>
-                {isEmergency ? '⚠️ Winter Smog Inversion Warning' : 'ℹ️ Atmospheric Advisory'}
+                {isEmergency ? '⚠️ Winter Smog Notice' : '🌿 Daily Air Guide'}
               </span>
-              <span className="text-xs text-slate-500">Telemetry: {aqiData.updatedAt}</span>
+              <span className="text-xs text-slate-400">Updated {aqiData.updatedAt}</span>
             </div>
-            <h3 className="text-base sm:text-lg font-bold text-slate-900 mt-1">
-              {aqiData.city}: AQI {aqiData.aqi} ({cat.category}) — PM2.5 is {Math.round(aqiData.pollutants.pm25 / 15)}x WHO 24h Threshold
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 mt-1">
+              {aqiData.city}: AQI {aqiData.aqi} — {cat.category}
             </h3>
             <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-3xl leading-relaxed">
-              {cat.advice} Keep vulnerable family members in interior rooms with HEPA/DIY air cleaning.
+              {cat.advice}
             </p>
           </div>
         </div>
@@ -48,17 +48,17 @@ export const AlertBanner: React.FC<AlertBannerProps> = ({ aqiData, onAskAI }) =>
           <div className="flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white/90 border border-slate-200 text-xs shadow-sm">
             <Clock className="h-4 w-4 text-emerald-600 shrink-0" />
             <div>
-              <span className="text-slate-400 text-[10px] block uppercase font-bold">Safest Vent Window</span>
-              <span className="font-bold text-emerald-800">{aqiData.ventilationWindow.start} - {aqiData.ventilationWindow.end}</span>
+              <span className="text-slate-400 text-[10px] block uppercase font-bold">Best Window to Air Home</span>
+              <span className="font-extrabold text-emerald-800">{aqiData.ventilationWindow.start} - {aqiData.ventilationWindow.end}</span>
             </div>
           </div>
 
           <button
-            onClick={() => onAskAI(`What emergency protocol should I take right now in ${aqiData.city} for my family with AQI at ${aqiData.aqi}?`)}
+            onClick={() => onAskAI(`What simple protective steps should I take right now in ${aqiData.city} for my family with AQI at ${aqiData.aqi}?`)}
             className="flex items-center justify-center space-x-1.5 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02]"
           >
             <Sparkles className="h-4 w-4" />
-            <span>AI Smog Action Plan</span>
+            <span>Family Action Tips</span>
           </button>
         </div>
       </div>

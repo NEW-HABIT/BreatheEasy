@@ -13,22 +13,37 @@ export const AqiGauge: React.FC<AqiGaugeProps> = ({ aqiData }) => {
   const cat = getAqiCategory(aqiData.aqi);
   const percentage = Math.min(Math.round((aqiData.aqi / 500) * 100), 100);
 
+  const getComfortStatus = (aqi: number) => {
+    if (aqi <= 50) return { title: 'Pure & Clean', advice: 'Ideal for outdoor walks, morning jogs, and open windows.', badge: 'Optimal Breathing' };
+    if (aqi <= 100) return { title: 'Moderate Air', advice: 'Good for most. Sensitive individuals may prefer light exercise.', badge: 'Comfortable' };
+    if (aqi <= 150) return { title: 'Mildly Hazy', advice: 'Kids and elders should avoid prolonged outdoor cardio today.', badge: 'Sensitive' };
+    if (aqi <= 200) return { title: 'Smoggy Air', advice: 'Noticeable haze. Wear a comfortable mask when traveling outdoors.', badge: 'Mask Advised' };
+    if (aqi <= 300) return { title: 'Heavy Smog', advice: 'Keep windows sealed. Best to rest indoors with filtered air.', badge: 'Stay Indoors' };
+    return { title: 'Severe Smog', advice: 'Hazardous air outside. Stay strictly indoors with air purifiers active.', badge: 'Emergency Rest' };
+  };
+
+  const comfort = getComfortStatus(aqiData.aqi);
+
   return (
-    <div className="glass-card-strong rounded-3xl p-6 flex flex-col items-center justify-between shadow-xl relative overflow-hidden h-full border border-white/80">
-      {/* Background soft glow matching AQI color */}
+    <div className="glass-card-strong rounded-3xl p-6 flex flex-col items-center justify-between shadow-xl relative overflow-hidden h-full border border-white/90">
+      {/* Background soft ambient halo matching AQI color */}
       <div 
-        className="absolute -top-16 -right-16 w-44 h-44 rounded-full blur-3xl opacity-20 pointer-events-none"
+        className="absolute -top-16 -right-16 w-52 h-52 rounded-full blur-3xl opacity-25 pointer-events-none transition-all duration-700"
         style={{ backgroundColor: cat.color }}
       />
 
-      <div className="w-full flex items-center justify-between text-xs text-slate-500 mb-2">
-        <span className="font-bold uppercase tracking-wider text-slate-700">Air Quality Index</span>
-        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-semibold text-[11px]">
-          Dominant: <strong className="text-emerald-700">{aqiData.primaryPollutant}</strong>
+      {/* Top Header */}
+      <div className="w-full flex items-center justify-between text-xs mb-2">
+        <span className="font-extrabold tracking-wide text-slate-800 flex items-center space-x-1.5">
+          <span className="h-2 w-2 rounded-full animate-pulse" style={{ backgroundColor: cat.color }} />
+          <span>Air Freshness</span>
+        </span>
+        <span className="px-3 py-1 rounded-full bg-slate-100/80 text-slate-700 font-bold text-[11px] border border-slate-200/60 shadow-sm">
+          {comfort.badge}
         </span>
       </div>
 
-      {/* Radial Gauge */}
+      {/* Sleek Radial Gauge */}
       <div className="relative flex items-center justify-center my-3">
         <svg className="w-48 h-48 sm:w-56 sm:h-56 transform -rotate-90" viewBox="0 0 160 160">
           {/* Background circle track */}
@@ -36,8 +51,8 @@ export const AqiGauge: React.FC<AqiGaugeProps> = ({ aqiData }) => {
             cx="80"
             cy="80"
             r="65"
-            stroke="#e2e8f0"
-            strokeWidth="11"
+            stroke="#f1f5f9"
+            strokeWidth="10"
             fill="transparent"
             strokeDasharray="408"
             strokeDashoffset="102"
@@ -49,7 +64,7 @@ export const AqiGauge: React.FC<AqiGaugeProps> = ({ aqiData }) => {
             cy="80"
             r="65"
             stroke={cat.color}
-            strokeWidth="11"
+            strokeWidth="10"
             fill="transparent"
             strokeDasharray="408"
             strokeDashoffset={408 - (306 * percentage) / 100}
@@ -64,58 +79,55 @@ export const AqiGauge: React.FC<AqiGaugeProps> = ({ aqiData }) => {
             {aqiData.aqi}
           </span>
           <span 
-            className="text-xs sm:text-sm font-extrabold uppercase tracking-wide px-3 py-0.5 rounded-full mt-1 border"
+            className="text-xs font-bold uppercase tracking-wide px-3 py-0.5 rounded-full mt-1.5 border shadow-sm"
             style={{ color: cat.color, backgroundColor: `${cat.color}15`, borderColor: `${cat.color}35` }}
           >
             {cat.category}
           </span>
-          <span className="text-[10px] text-slate-400 mt-1 font-medium">Standard 0 - 500</span>
+          <span className="text-[11px] text-slate-400 mt-1 font-medium">{comfort.title}</span>
         </div>
       </div>
 
-      {/* WHO Guideline Exceedance Box */}
-      <div className="w-full bg-white/85 rounded-2xl p-3.5 border border-slate-200/80 mb-4 text-xs shadow-sm">
-        <div className="flex items-center justify-between text-slate-700 mb-1.5 font-medium">
+      {/* Human-Friendly Breathing Comfort Card */}
+      <div className="w-full bg-white/90 rounded-2xl p-3.5 border border-slate-200/80 mb-3 text-xs shadow-sm space-y-1.5">
+        <div className="flex items-center justify-between text-slate-800 font-bold">
           <span className="flex items-center space-x-1.5">
-            <AlertCircle className="h-3.5 w-3.5 text-rose-500" />
-            <span>WHO 24h PM2.5 Limit: 15 µg/m³</span>
+            <span className="text-sm">🍃</span>
+            <span>Breathing Comfort</span>
           </span>
-          <span className="font-extrabold text-rose-600">
-            {Math.round((aqiData.pollutants.pm25 / 15) * 10) / 10}x Higher
+          <span className="text-[11px] font-extrabold" style={{ color: cat.color }}>
+            {cat.category}
           </span>
         </div>
-        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-          <div 
-            className="h-full bg-gradient-to-r from-amber-400 via-rose-500 to-red-600 rounded-full transition-all duration-1000"
-            style={{ width: `${Math.min((aqiData.pollutants.pm25 / 15) * 10, 100)}%` }}
-          />
-        </div>
+        <p className="text-[11px] text-slate-500 leading-relaxed">
+          {comfort.advice}
+        </p>
       </div>
 
-      {/* Weather telemetry */}
-      <div className="w-full grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 text-center">
+      {/* Clean Quick Metrics */}
+      <div className="w-full grid grid-cols-3 gap-2 pt-2 border-t border-slate-100/80 text-center">
         <div className="flex flex-col items-center">
-          <div className="flex items-center space-x-1 text-slate-500 text-xs font-medium">
-            <Thermometer className="h-3.5 w-3.5 text-amber-500" />
+          <div className="flex items-center space-x-1 text-slate-400 text-[11px] font-medium">
+            <Thermometer className="h-3 w-3 text-amber-500" />
             <span>Temp</span>
           </div>
-          <span className="text-sm font-bold text-slate-800 mt-0.5">{aqiData.temperature}°C</span>
-        </div>
-
-        <div className="flex flex-col items-center border-x border-slate-200">
-          <div className="flex items-center space-x-1 text-slate-500 text-xs font-medium">
-            <Droplets className="h-3.5 w-3.5 text-cyan-600" />
-            <span>Humidity</span>
-          </div>
-          <span className="text-sm font-bold text-slate-800 mt-0.5">{aqiData.humidity}%</span>
+          <span className="text-sm font-extrabold text-slate-800 mt-0.5">{aqiData.temperature}°C</span>
         </div>
 
         <div className="flex flex-col items-center">
-          <div className="flex items-center space-x-1 text-slate-500 text-xs font-medium">
-            <Wind className="h-3.5 w-3.5 text-teal-600" />
-            <span>Wind</span>
+          <div className="flex items-center space-x-1 text-slate-400 text-[11px] font-medium">
+            <Droplets className="h-3 w-3 text-blue-500" />
+            <span>Humidity</span>
           </div>
-          <span className="text-sm font-bold text-slate-800 mt-0.5">{aqiData.windSpeed} km/h</span>
+          <span className="text-sm font-extrabold text-slate-800 mt-0.5">{aqiData.humidity}%</span>
+        </div>
+
+        <div className="flex flex-col items-center">
+          <div className="flex items-center space-x-1 text-slate-400 text-[11px] font-medium">
+            <Wind className="h-3 w-3 text-teal-500" />
+            <span>Breeze</span>
+          </div>
+          <span className="text-sm font-extrabold text-slate-800 mt-0.5">{aqiData.windSpeed} km/h</span>
         </div>
       </div>
     </div>

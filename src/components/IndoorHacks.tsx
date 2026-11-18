@@ -12,65 +12,65 @@ export const IndoorHacks: React.FC<IndoorHacksProps> = ({ onAskAI }) => {
 
   const hacks = [
     {
-      title: 'DIY Corsi-Rosenthal Air Cleaner Box Fan',
-      category: 'Filtration Engineering',
-      cost: '₹700 - ₹1,400 ($10 - $18)',
-      impact: 'Reduces room PM2.5 by 75-85% in 20 mins',
-      cadr: '450 - 600 CFM (Matches $600 commercial purifiers)',
+      title: 'DIY Bedroom Air Cleaner Box Fan',
+      category: 'Home Air Purifier',
+      cost: '₹700 - ₹1,400 (Budget Friendly)',
+      impact: 'Freshens 80% of room air within 20 mins',
+      benefit: 'Equivalent to high-end purifiers',
       icon: Hammer,
-      summary: 'A proven, open-source air purifier built with a standard box fan and MERV-13 furnace filters.',
+      summary: 'A simple, proven air filter made with a basic box fan and an air filter.',
       steps: [
-        'Obtain a 20-inch domestic box fan (or exhaust fan) and one to four 20"x20" MERV-13 (or H13 HEPA) furnace filters.',
-        'Ensure the airflow indicator arrow on the filter points inward toward the intake side of the fan.',
-        'Use heavy duct tape to seal all 4 outer edges, preventing any air bypass leaks around the filter perimeter.',
-        'Cut a circular shroud out of cardboard and tape it to the front face of the fan to eliminate eddy-current backflow and boost throughput by 25%.',
-        'Place the unit in the center of the bedroom, raised 1 foot off the ground. Run continuously on speed 2.'
+        'Get an inexpensive 20-inch box fan (or table fan) and a clean air filter (MERV-13 or HEPA grade).',
+        'Check the little arrow on the filter edge: make sure it points inward towards the fan intake.',
+        'Use ordinary tape to seal the edges snugly so all incoming air passes through the filter.',
+        'Cut a simple circular ring from cardboard and tape it to the front face to blow air forward smoothly.',
+        'Place it slightly elevated in your bedroom or living room on low or medium speed for silent, pure airflow.'
       ]
     },
     {
-      title: 'Damp Towel Threshold & Window Infiltration Barrier',
-      category: 'Passive Sealing Hack',
-      cost: '₹0 (Free household items)',
-      impact: 'Blocks 45% of coarse infiltrating street soot & PM10',
-      cadr: 'Electrostatic passive barrier',
+      title: 'Damp Towel Door & Window Fresh Air Barrier',
+      category: 'Dust & Draft Seal',
+      cost: 'Free (Household Items)',
+      impact: 'Stops fine outdoor dust and soot from entering',
+      benefit: 'Keeps bedroom floors & air pristine',
       icon: Layers,
-      summary: 'High-density winter smog seeps through window frame gaps and bottom door thresholds under cold negative pressure.',
+      summary: 'During hazy or smoggy evenings, outdoor dust creeps in through door thresholds and window gaps.',
       steps: [
-        'Roll up standard bath towels and dampen them lightly with water (not dripping wet).',
-        'Firmly wedge the rolled damp towel along the bottom gap of all exterior-facing entry doors.',
-        'Use standard painter’s tape or removable masking tape to seal the hairline sash cracks around sliding glass windows.',
-        'The water moisture on the towel fibers creates an electrostatic attraction zone that catches sub-micron carbon particles as air tries to seep inside.',
-        'Rinse the towel in clean water once daily to wash away captured particulate crust.'
+        'Take regular bath towels and dampen them lightly with tap water (not soaking wet).',
+        'Roll the damp towel snugly against the bottom crack of your main entry doors and balcony doors.',
+        'Use removable paper masking tape on any loose window frames with visible gaps.',
+        'The light moisture traps airborne dust particles as air tries to seep in, keeping your room air calm and pure.',
+        'Simply rinse and wash the towel every few days to keep it fresh.'
       ]
     },
     {
-      title: 'Kitchen Inversion Cooking & Exhaust Protocol',
-      category: 'Source Reduction',
-      cost: '₹0',
-      impact: 'Eliminates 90% of toxic indoor NO₂ spikes',
-      cadr: 'Immediate source elimination',
+      title: 'Smart Kitchen Fume & Cooking Shield',
+      category: 'Kitchen Fresh Air',
+      cost: 'Free Habit',
+      impact: 'Prevents indoor fumes and oil smoke from spreading',
+      benefit: 'Protects kids and elders from coughing',
       icon: Flame,
-      summary: 'Gas combustion stoves and oil tempering produce indoor NO₂ and particulate spikes that frequently exceed 400 µg/m³ inside apartments.',
+      summary: 'Cooking with hot oil or direct gas flames can quickly fill living rooms with heavy smoke and odors.',
       steps: [
-        'Never fry, temper mustard seeds, or char rotis on open gas flames during severe outdoor smog days.',
-        'Switch to electric magnetic induction, electric rice cookers, or microwaves which generate zero combustion fumes.',
-        'If using a gas burner, run the kitchen exhaust hood on MAXIMUM speed 2 minutes before igniting the flame and leave it running for 5 minutes after shutting it off.',
-        'Keep the kitchen door closed during cooking to avoid turning the bedrooms into particulate reservoirs.'
+        'Turn on the kitchen exhaust or chimney fan 1 minute before lighting the stove, and let it run for a few minutes after.',
+        'Keep the kitchen door closed and kitchen window slightly cracked open so cooking steam escapes outside immediately.',
+        'Cover pots with lids while simmering to reduce steam and oil droplets in the air.',
+        'When possible, enjoy steaming, baking, or electric kettle cooking on high smog days.'
       ]
     },
     {
-      title: 'NASA-Verified IAQ Botanical Shield (Phytoremediation)',
-      category: 'Natural Bio-Filtration',
-      cost: '₹200 - ₹500 per plant',
-      impact: 'Absorbs indoor VOCs, formaldehyde, and emits O₂ overnight',
-      cadr: 'Continuous bio-absorption',
+      title: 'Fresh Living Houseplants (Green Air Filters)',
+      category: 'Natural Greenery',
+      cost: '₹150 - ₹350 per plant',
+      impact: 'Naturally purifies air and adds gentle room humidity',
+      benefit: 'Produces fresh oxygen day & night',
       icon: Sprout,
-      summary: 'Specific indoor houseplants absorb gaseous pollutants through stomata and root-associated soil microbiomes.',
+      summary: 'Hardy indoor plants gently filter room air and bring calming greenery into your living space.',
       steps: [
-        'Sansevieria (Snake Plant / Mother-in-Law’s Tongue): Place 2-3 pots in the bedroom; uniquely converts CO₂ into oxygen at night via Crassulacean Acid Metabolism.',
-        'Areca Palm: Acts as a natural humidifier and airborne particulate settle-down catalyst.',
-        'Spider Plant & Money Plant: Excellent at trapping indoor xylene and benzene released from synthetic paints and furniture.',
-        'Wipe plant leaves gently with a damp cotton cloth once weekly to remove settled particulate crust so stomata remain open.'
+        'Snake Plant (Sansevieria): Perfect for bedside tables. One of the rare plants that releases pure oxygen throughout the night.',
+        'Areca Palm: Beautiful lush leaves that naturally balance dry indoor air and settle ambient dust.',
+        'Money Plant & Spider Plant: Easy to maintain and helps remove subtle paint and synthetic odors.',
+        'Gently wipe the leaves with a damp cloth once a week so the plant can breathe and thrive.'
       ]
     }
   ];
@@ -80,25 +80,25 @@ export const IndoorHacks: React.FC<IndoorHacksProps> = ({ onAskAI }) => {
       <div className="glass-card-strong rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/80">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="text-emerald-700 font-extrabold uppercase text-xs tracking-wider">Zero & Low-Cost Engineering</span>
+            <span className="text-emerald-700 font-extrabold uppercase text-xs tracking-wider">Home Care & Comfort</span>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200">
-              Lab & Field Tested
+              Simple & Budget-Friendly
             </span>
           </div>
           <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
-            Indoor Air Quality (IAQ) Survival Hacks
+            Easy Ways to Keep Your Home Air Clean & Fresh
           </h2>
           <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
-            Practical, affordable hacks that cut personal exposure to toxic winter smog without spending thousands on commercial appliances.
+            Practical, low-cost methods to block dust and smoke, freshen bedroom air, and keep your family breathing comfortably.
           </p>
         </div>
 
         <button
-          onClick={() => onAskAI('Can you explain the exact science and step-by-step instructions for building a DIY air purifier at home with low budget?')}
+          onClick={() => onAskAI('Can you explain simple and low-budget ways to keep indoor air clean and healthy for my family?')}
           className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition self-start md:self-auto shrink-0"
         >
           <Sparkles className="h-4 w-4" />
-          <span>Ask AI for Custom IAQ Hack</span>
+          <span>Ask AI for Home Tips</span>
         </button>
       </div>
 
@@ -153,7 +153,7 @@ export const IndoorHacks: React.FC<IndoorHacksProps> = ({ onAskAI }) => {
               ✨ {hacks[activeHack].impact}
             </span>
             <span className="px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 font-semibold shadow-sm">
-              💨 CADR: {hacks[activeHack].cadr}
+              🍃 {hacks[activeHack].benefit}
             </span>
           </div>
         </div>

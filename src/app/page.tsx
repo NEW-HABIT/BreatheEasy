@@ -80,16 +80,16 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full glass-pill border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-sm animate-float">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Challenge 6: Urban Air Quality Assistant • Live Real-Time Sensors</span>
+            <span>Real-Time Clean Air & Family Wellness Guide</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.15]">
-            Breathe Clean, Live Green. <br />
-            <span className="gradient-text-green">Protecting Families from Winter Smog</span>
+            Breathe Clean, Live Well. <br />
+            <span className="gradient-text-green">Protecting Your Family from Seasonal Smog</span>
           </h1>
 
           <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
-            Real-time urban pollution telemetry meets Google Gemini GenAI. Personalized daily schedules, clinical family health shields, low-cost indoor hacks, and quantified carbon & particulate reductions.
+            Live local air telemetry meets gentle AI guidance. Daily breath routines, personalized family care, easy home hacks, and everyday green habits for fresh, pure air.
           </p>
 
           {/* Call to Actions */}
@@ -98,7 +98,7 @@ export default function LandingPage() {
               href="/dashboard"
               className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-emerald-600/25 transition-all hover:scale-[1.02] flex items-center justify-center space-x-2"
             >
-              <span>Protect My Family Now</span>
+              <span>Explore My City&apos;s Air</span>
               <ArrowRight className="h-5 w-5" />
             </Link>
 
@@ -106,7 +106,7 @@ export default function LandingPage() {
               href="#live-preview"
               className="w-full sm:w-auto px-6 py-3.5 rounded-2xl glass-card hover:bg-white text-slate-700 font-semibold text-sm sm:text-base border border-slate-200 transition flex items-center justify-center space-x-2"
             >
-              <span>Explore Live Telemetry</span>
+              <span>View Live Air & Weather</span>
               <ChevronRight className="h-4 w-4 text-slate-400" />
             </a>
           </div>
@@ -114,20 +114,20 @@ export default function LandingPage() {
           {/* Stats strip */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-10">
             <div className="glass-card p-4 rounded-2xl text-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-emerald-700">100M+</span>
-              <p className="text-xs text-slate-500 mt-0.5">Citizens in Smog Inversions</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-emerald-700">100% Free</span>
+              <p className="text-xs text-slate-500 mt-0.5">Zero API Keys Required</p>
             </div>
             <div className="glass-card p-4 rounded-2xl text-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-teal-700">Zero Demo Data</span>
-              <p className="text-xs text-slate-500 mt-0.5">100% Live Open-Meteo Satellite Feed</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-teal-700">Live Telemetry</span>
+              <p className="text-xs text-slate-500 mt-0.5">Real-Time Satellite & Sensors</p>
             </div>
             <div className="glass-card p-4 rounded-2xl text-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-emerald-700">75% Cut</span>
-              <p className="text-xs text-slate-500 mt-0.5">Inhaled PM2.5 via DIY IAQ Hacks</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-emerald-700">Family First</span>
+              <p className="text-xs text-slate-500 mt-0.5">Tailored for Kids & Elders</p>
             </div>
             <div className="glass-card p-4 rounded-2xl text-center">
-              <span className="text-2xl sm:text-3xl font-extrabold text-teal-700">Gemini 2.0</span>
-              <p className="text-xs text-slate-500 mt-0.5">Clinical Epidemiological AI</p>
+              <span className="text-2xl sm:text-3xl font-extrabold text-teal-700">Home Hacks</span>
+              <p className="text-xs text-slate-500 mt-0.5">Easy, Low-Cost Clean Air Tips</p>
             </div>
           </div>
         </div>
@@ -141,20 +141,20 @@ export default function LandingPage() {
               <div className="flex items-center space-x-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
-                  Live Sensor Snapshot
+                  Live Air Snapshot
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
-                Real-Time Atmospheric Diagnostics
+                Real-Time Air Quality & Freshness
               </h2>
               <p className="text-xs text-slate-500 mt-0.5">
-                Switch location below to see live readings from international monitoring stations.
+                Select any city to see live, real-time atmospheric measurements.
               </p>
             </div>
 
             {/* City pills */}
             <div className="flex flex-wrap items-center gap-1.5">
-              {['New Delhi', 'Lahore', 'Mumbai', 'Beijing', 'London', 'New York'].map((city) => (
+              {['New Delhi', 'Mumbai', 'Bengaluru', 'Kolkata', 'London', 'Tokyo'].map((city) => (
                 <button
                   key={city}
                   onClick={() => setSampleCity(city)}
@@ -175,7 +175,7 @@ export default function LandingPage() {
               {/* AQI Meter Glass Tile */}
               <div className="glass-card p-5 rounded-2xl flex flex-col justify-between">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Current Air Quality</span>
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Air Quality Score</span>
                   <div className="flex items-baseline space-x-3 mt-3">
                     <span className="text-5xl font-black text-slate-900">{liveData.aqi}</span>
                     <span 
@@ -188,42 +188,42 @@ export default function LandingPage() {
                   <p className="text-xs text-slate-600 mt-3 leading-relaxed">{cat.advice}</p>
                 </div>
                 <div className="pt-4 border-t border-slate-100 text-[11px] text-slate-400">
-                  Primary Pollutant: <strong className="text-slate-700">{liveData.primaryPollutant}</strong>
+                  Main Element: <strong className="text-slate-700">{liveData.primaryPollutant}</strong>
                 </div>
               </div>
 
               {/* Pollutants Breakdown */}
               <div className="glass-card p-5 rounded-2xl flex flex-col justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Key Pollutants</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Air Composition</span>
                 <div className="grid grid-cols-2 gap-2.5 my-3 text-xs">
                   <div className="bg-white/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-slate-400 block text-[10px]">PM2.5</span>
+                    <span className="text-slate-400 block text-[10px]">Fine Smoke & Dust</span>
                     <span className="text-base font-bold text-slate-800">{liveData.pollutants.pm25} µg/m³</span>
                   </div>
                   <div className="bg-white/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-slate-400 block text-[10px]">PM10</span>
+                    <span className="text-slate-400 block text-[10px]">Street Dust</span>
                     <span className="text-base font-bold text-slate-800">{liveData.pollutants.pm10} µg/m³</span>
                   </div>
                   <div className="bg-white/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-slate-400 block text-[10px]">NO₂</span>
+                    <span className="text-slate-400 block text-[10px]">Vehicle Fumes</span>
                     <span className="text-base font-bold text-slate-800">{liveData.pollutants.no2} ppb</span>
                   </div>
                   <div className="bg-white/80 p-2.5 rounded-xl border border-slate-100">
-                    <span className="text-slate-400 block text-[10px]">Ozone</span>
+                    <span className="text-slate-400 block text-[10px]">Sunlight Haze</span>
                     <span className="text-base font-bold text-slate-800">{liveData.pollutants.o3} ppb</span>
                   </div>
                 </div>
                 <div className="text-[11px] text-emerald-700 font-medium">
-                  WHO 24h Threshold: 15 µg/m³
+                  Clean Target: Under 15 µg/m³
                 </div>
               </div>
 
               {/* Weather & Solar Window */}
               <div className="glass-card p-5 rounded-2xl flex flex-col justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Inversion Ventilation</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Best Ventilation Hours</span>
                 <div className="my-3 space-y-2 text-xs">
                   <div className="flex items-center justify-between p-2 rounded-xl bg-white/80 border border-slate-100">
-                    <span className="text-slate-500">Safe Window</span>
+                    <span className="text-slate-500">Freshest Air Time</span>
                     <span className="font-bold text-emerald-700">{liveData.ventilationWindow.start} - {liveData.ventilationWindow.end}</span>
                   </div>
                   <div className="flex items-center justify-between p-2 rounded-xl bg-white/80 border border-slate-100">
@@ -239,13 +239,13 @@ export default function LandingPage() {
                   href="/dashboard"
                   className="text-xs text-center py-2 px-3 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-800 font-semibold transition"
                 >
-                  Open Full Diagnostic Dashboard →
+                  Open Interactive Dashboard →
                 </Link>
               </div>
             </div>
           ) : (
             <div className="p-8 text-center text-slate-400 text-sm">
-              Connecting to atmospheric telemetry...
+              Connecting to live air sensors...
             </div>
           )}
         </div>
@@ -255,13 +255,13 @@ export default function LandingPage() {
       <section id="features" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
         <div className="text-center space-y-3">
           <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-200">
-            Comprehensive Anti-Smog Ecosystem
+            Carefully Designed for Every Family
           </span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-            Engineered for Real-World Smog Defense
+            Peace of Mind in Every Breath
           </h2>
           <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
-            Every feature is backed by environmental epidemiological data and indoor air aerosol physics.
+            Simple, calming tools that take the stress out of seasonal air changes.
           </p>
         </div>
 
@@ -270,9 +270,9 @@ export default function LandingPage() {
             <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
               <Users className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">Family Health Shield</h3>
+            <h3 className="text-lg font-bold text-slate-900">Family Health & Comfort</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Personalized clinical guidance per family member based on age, asthma, heart conditions, and respiratory history. Children and elderly receive tailored airway protocols.
+              Gentle, personalized daily advice for each loved one — keeping children active, elders comfortable, and sensitive lungs protected.
             </p>
           </div>
 
@@ -280,9 +280,9 @@ export default function LandingPage() {
             <div className="h-12 w-12 rounded-2xl bg-teal-500/10 text-teal-700 flex items-center justify-center font-bold">
               <BarChart3 className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">Quantified Impact Engine</h3>
+            <h3 className="text-lg font-bold text-slate-900">Everyday Eco Habits</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Toggle sustainable daily habits (metro commute, induction cooking, electric vaporizers) and watch your family&apos;s real-time kg CO2 savings and % PM2.5 reduction update dynamically.
+              Simple lifestyle tweaks like metro rides, cleaner cooking, and house plants that reduce indoor dust and lower carbon emissions.
             </p>
           </div>
 
@@ -290,9 +290,9 @@ export default function LandingPage() {
             <div className="h-12 w-12 rounded-2xl bg-green-500/10 text-green-700 flex items-center justify-center font-bold">
               <Sparkles className="h-6 w-6" />
             </div>
-            <h3 className="text-lg font-bold text-slate-900">GenAI Conversational Advisor</h3>
+            <h3 className="text-lg font-bold text-slate-900">Friendly AI Assistant</h3>
             <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Powered by Google Gemini with live atmospheric context injection. Ask about DIY Corsi-Rosenthal box purifiers, damp towel seals, or pediatric symptom relief.
+              Get clear, warm answers anytime: find the cleanest hours for outdoor walks, easy DIY air filters, and soothing home remedies.
             </p>
           </div>
         </div>

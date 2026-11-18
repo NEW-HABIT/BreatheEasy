@@ -52,24 +52,24 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({ aqiData }) => {
   };
 
   return (
-    <div className="glass-card rounded-3xl p-5 shadow-lg border border-white/80 space-y-4">
+    <div className="glass-card rounded-3xl p-5 shadow-lg border border-white/90 space-y-4">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-700 bg-emerald-100/80 px-2.5 py-0.5 rounded-full border border-emerald-200">
-            Live Weather & Inversion Telemetry
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-emerald-800 bg-emerald-100/90 px-2.5 py-0.5 rounded-full border border-emerald-200">
+            🌿 Local Climate & Atmosphere
           </span>
-          <h3 className="text-sm font-extrabold text-slate-900 mt-1">
-            Micro-Climate & Thermal Dispersion Diagnostics
+          <h3 className="text-sm font-extrabold text-slate-800 mt-1">
+            Today&apos;s Weather & Fresh Air Flow
           </h3>
         </div>
         <div className="flex items-center space-x-1 text-[11px] font-semibold text-slate-500">
           <Compass className="h-3.5 w-3.5 text-emerald-600" />
-          <span>{aqiData.city} Station</span>
+          <span>{aqiData.city}</span>
         </div>
       </div>
 
-      {/* Main Temperature & Weather Hero Banner */}
+      {/* Main Temperature & Comfort Banner */}
       <div className="bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-green-500/10 border border-emerald-200/60 rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center space-x-3.5">
           <div className="p-3 bg-white rounded-2xl shadow-sm border border-emerald-100">
@@ -84,78 +84,80 @@ export const WeatherCard: React.FC<WeatherCardProps> = ({ aqiData }) => {
           </div>
         </div>
 
-        {/* Inversion Alert Pill */}
+        {/* Friendly Air Flow Pill */}
         <div className={`p-3 rounded-2xl border ${getInversionBadge(w.inversionRisk)} max-w-sm`}>
           <div className="flex items-center space-x-1.5 font-bold text-xs">
-            <AlertTriangle className="h-4 w-4 shrink-0" />
-            <span>Thermal Inversion: {w.inversionRisk} Risk</span>
+            <Wind className="h-4 w-4 shrink-0" />
+            <span>Air Flow: {w.inversionRisk === 'Severe' || w.inversionRisk === 'High' ? 'Calm & Stagnant' : 'Fresh & Active'}</span>
           </div>
           <p className="text-[11px] mt-1 leading-relaxed opacity-90">
-            {w.inversionExplanation}
+            {w.inversionRisk === 'Severe' || w.inversionRisk === 'High'
+              ? 'Calm ground winds keep morning haze near the street. Safe to air out your home during the sunny afternoon window.'
+              : 'Brisk natural breeze is actively clearing out haze and keeping outdoor air moving.'}
           </p>
         </div>
       </div>
 
-      {/* Detailed Weather Metrics Grid */}
+      {/* Aesthetic Weather Metrics Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-        {/* Humidity */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
+        {/* Moisture */}
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
             <Droplets className="h-3.5 w-3.5 text-blue-500" />
-            <span className="text-[11px] font-semibold">Humidity</span>
+            <span className="text-[11px] font-semibold text-slate-600">Humidity</span>
           </div>
-          <span className="text-base font-extrabold text-slate-900">{w.humidity}%</span>
-          <span className="text-[10px] text-slate-400 block">{w.humidity > 70 ? 'Trapping fog' : 'Normal'}</span>
+          <span className="text-base font-extrabold text-slate-800">{w.humidity}%</span>
+          <span className="text-[10px] text-slate-400 block">{w.humidity > 70 ? 'Moist & Hazy' : 'Pleasant'}</span>
         </div>
 
-        {/* Wind Speed & Direction */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
+        {/* Gentle Breeze */}
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
             <Wind className="h-3.5 w-3.5 text-teal-600" />
-            <span className="text-[11px] font-semibold">Wind Speed</span>
+            <span className="text-[11px] font-semibold text-slate-600">Breeze</span>
           </div>
-          <span className="text-base font-extrabold text-slate-900">{w.windSpeed} km/h</span>
-          <span className="text-[10px] text-emerald-700 font-bold block">{w.windDirectionCompass} ({w.windDirection}°)</span>
+          <span className="text-base font-extrabold text-slate-800">{w.windSpeed} km/h</span>
+          <span className="text-[10px] text-emerald-700 font-bold block">{w.windDirectionCompass} Direction</span>
         </div>
 
-        {/* Pressure */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
-            <Gauge className="h-3.5 w-3.5 text-indigo-500" />
-            <span className="text-[11px] font-semibold">Pressure</span>
-          </div>
-          <span className="text-base font-extrabold text-slate-900">{w.pressure} hPa</span>
-          <span className="text-[10px] text-slate-400 block">{w.pressure > 1014 ? 'High Stagnation' : 'Normal'}</span>
-        </div>
-
-        {/* Visibility */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
+        {/* Horizon View */}
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
             <Eye className="h-3.5 w-3.5 text-amber-500" />
-            <span className="text-[11px] font-semibold">Visibility</span>
+            <span className="text-[11px] font-semibold text-slate-600">Visibility</span>
           </div>
-          <span className="text-base font-extrabold text-slate-900">{w.visibilityKm} km</span>
-          <span className="text-[10px] text-slate-400 block">{w.visibilityKm < 2.0 ? 'Smog haze' : 'Good'}</span>
+          <span className="text-base font-extrabold text-slate-800">{w.visibilityKm} km</span>
+          <span className="text-[10px] text-slate-400 block">{w.visibilityKm < 2.0 ? 'Smog Haze' : 'Clear View'}</span>
         </div>
 
-        {/* UV Index */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
-            <Sun className="h-3.5 w-3.5 text-amber-600" />
-            <span className="text-[11px] font-semibold">UV Index</span>
+        {/* Sunshine */}
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
+            <Sun className="h-3.5 w-3.5 text-amber-500" />
+            <span className="text-[11px] font-semibold text-slate-600">Sun Light</span>
           </div>
-          <span className="text-base font-extrabold text-slate-900">{w.uvIndex}</span>
-          <span className="text-[10px] text-slate-400 block">Moderate</span>
+          <span className="text-base font-extrabold text-slate-800">UV {w.uvIndex}</span>
+          <span className="text-[10px] text-slate-400 block">Gentle Warmth</span>
         </div>
 
         {/* Dew Point */}
-        <div className="bg-white/80 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
-          <div className="flex items-center space-x-1.5 text-slate-500 mb-1">
-            <Thermometer className="h-3.5 w-3.5 text-rose-500" />
-            <span className="text-[11px] font-semibold">Dew Point</span>
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
+            <Thermometer className="h-3.5 w-3.5 text-rose-400" />
+            <span className="text-[11px] font-semibold text-slate-600">Dew Point</span>
           </div>
-          <span className="text-base font-extrabold text-slate-900">{w.dewPoint}°C</span>
-          <span className="text-[10px] text-slate-400 block">Condensation</span>
+          <span className="text-base font-extrabold text-slate-800">{w.dewPoint}°C</span>
+          <span className="text-[10px] text-slate-400 block">Cool Ground</span>
+        </div>
+
+        {/* Safe Window */}
+        <div className="bg-white/90 border border-slate-200/80 rounded-2xl p-3 shadow-sm hover:shadow-md transition">
+          <div className="flex items-center space-x-1.5 text-slate-400 mb-1">
+            <Compass className="h-3.5 w-3.5 text-emerald-600" />
+            <span className="text-[11px] font-semibold text-slate-600">Air Window</span>
+          </div>
+          <span className="text-xs font-extrabold text-emerald-800 block truncate">{aqiData.ventilationWindow.start}</span>
+          <span className="text-[10px] text-slate-400 block">Best Fresh Air</span>
         </div>
       </div>
     </div>
