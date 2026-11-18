@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { degreesToCompass, assessInversionRisk } from '../src/lib/iaqEngineering.ts';
+import { degreesToCompass, assessInversionRisk } from '../src/lib/iaqEngineering.mjs';
 
 test('Meteorological & Inversion Calculations', async (t) => {
   await t.test('converts wind azimuth degrees to compass directions', () => {

@@ -6,7 +6,7 @@ import {
   getWhoExceedanceRatio,
   AQI_LEVELS,
   CITIES_DATA 
-} from '../src/lib/aqiData.ts';
+} from '../src/lib/aqiData.mjs';
 
 test('AQI Categorization Scale', async (t) => {
   await t.test('evaluates AQI 35 as Good', () => {

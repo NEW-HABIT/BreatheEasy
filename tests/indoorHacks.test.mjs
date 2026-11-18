@@ -5,7 +5,7 @@ import {
   calculateIndoorExposure, 
   evaluateDiurnalWindowSafety,
   calculateAirChangesPerHour
-} from '../src/lib/iaqEngineering.ts';
+} from '../src/lib/iaqEngineering.mjs';
 
 test('Indoor Air Quality (IAQ) Engineering Blueprints', async (t) => {
   await t.test('Corsi-Rosenthal box fan delivers 480+ CFM CADR matching $600 appliances', () => {

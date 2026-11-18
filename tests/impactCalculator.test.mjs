@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateAdoptedImpact, INITIAL_SUSTAINABLE_SWAPS } from '../src/lib/impactCalculator.ts';
+import { calculateAdoptedImpact, INITIAL_SUSTAINABLE_SWAPS } from '../src/lib/impactCalculator.mjs';
 
 const mockSwaps = [
   { id: '1', title: 'Metro Commute', co2SavedKgPerDay: 4.8, pm25ReductionPercent: 65, adopted: true },

@@ -4,7 +4,7 @@ import {
   DEFAULT_FAMILY_MEMBERS, 
   DEFAULT_USER_PROFILE, 
   INITIAL_COMMUNITY_POSTS 
-} from '../src/lib/store.ts';
+} from '../src/lib/store.mjs';
 
 test('Data Store & Family Profile Archetypes', async (t) => {
   await t.test('default family members represent complete multi-generational cohort', () => {

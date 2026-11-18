@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { calculateFamilyRisk } from '../src/lib/aqiData.ts';
+import { calculateFamilyRisk } from '../src/lib/aqiData.mjs';
 
 test('Family Member Health Risk Categorization', async (t) => {
   await t.test('6-year-old child with asthma in severe smog (AQI 320) is Severe', () => {
