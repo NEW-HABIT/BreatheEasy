@@ -153,8 +153,8 @@ export default function DashboardPage() {
                 resolvedCityName = place;
               }
             }
-          } catch (e) {
-            console.log('Reverse geocoding client fallback:', e);
+          } catch {
+            // Geocoding fallback
           }
         } else {
           // If desktop browser reported foreign/default coordinates (VPN or Windows desktop default), calibrate to Indian region

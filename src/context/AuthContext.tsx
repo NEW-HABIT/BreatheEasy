@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { FamilyMember } from '@/types';
 
 export interface User {
   id: string;
@@ -14,7 +15,7 @@ export interface User {
   cookingFuel: string;
   commuteMode: string;
   commuteDistanceKm: number;
-  familyMembers?: any[];
+  familyMembers?: FamilyMember[];
 }
 
 interface AuthContextType {
@@ -101,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('breatheasy_user', JSON.stringify(data.user));
 
       return { success: true };
-    } catch (err: any) {
+    } catch (err: unknown) {
       // Offline fallback for demo evaluator user
       if (email === 'rajesh.sharma@example.com') {
         const demoUser: User = {
@@ -144,7 +145,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } catch (_) {}
       }
 
-      return { success: false, error: err.message || 'Network error during login' };
+      const errorMessage = err instanceof Error ? err.message : 'Network error during login';
+      return { success: false, error: errorMessage };
     }
   };
 
@@ -176,7 +178,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       localStorage.setItem('breatheasy_user', JSON.stringify(data.user));
 
       return { success: true };
-    } catch (err: any) {
+    } catch {
       // Standalone Vercel / serverless fallback
       const localUser: User = {
         id: `user-${Date.now()}`,

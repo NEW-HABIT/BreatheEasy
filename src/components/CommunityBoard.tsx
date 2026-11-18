@@ -118,9 +118,11 @@ export const CommunityBoard: React.FC<CommunityBoardProps> = ({ initialPosts }) 
           
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-[11px] text-slate-600 font-semibold block mb-1">Initiative Title</label>
+              <label htmlFor="init-title" className="text-[11px] text-slate-600 font-semibold block mb-1">Initiative Title</label>
               <input
+                id="init-title"
                 type="text"
+                aria-label="Initiative Title"
                 placeholder="e.g. Leaf Burning Vigilance Squad"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
@@ -130,9 +132,11 @@ export const CommunityBoard: React.FC<CommunityBoardProps> = ({ initialPosts }) 
             </div>
 
             <div>
-              <label className="text-[11px] text-slate-600 font-semibold block mb-1">Neighborhood / Sector</label>
+              <label htmlFor="init-neigh" className="text-[11px] text-slate-600 font-semibold block mb-1">Neighborhood / Sector</label>
               <input
+                id="init-neigh"
                 type="text"
+                aria-label="Neighborhood or Sector"
                 placeholder="e.g. Sector 14, Gurugram"
                 value={neighborhood}
                 onChange={(e) => setNeighborhood(e.target.value)}

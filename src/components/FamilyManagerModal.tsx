@@ -122,6 +122,7 @@ export const FamilyManagerModal: React.FC<FamilyManagerModalProps> = ({
                 <label className="text-[11px] text-slate-600 font-medium block mb-1">Name</label>
                 <input
                   type="text"
+                  aria-label="Family member name"
                   placeholder="e.g. Aarav"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
@@ -134,7 +135,8 @@ export const FamilyManagerModal: React.FC<FamilyManagerModalProps> = ({
                 <label className="text-[11px] text-slate-600 font-medium block mb-1">Role</label>
                 <select
                   value={newRole}
-                  onChange={(e) => setNewRole(e.target.value as any)}
+                  aria-label="Family member role"
+                  onChange={(e) => setNewRole(e.target.value as 'Child' | 'Elderly' | 'Self' | 'Spouse' | 'Other')}
                   className="w-full glass-input rounded-xl px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none"
                 >
                   <option value="Child">Child (High Risk)</option>
@@ -149,6 +151,7 @@ export const FamilyManagerModal: React.FC<FamilyManagerModalProps> = ({
                 <label className="text-[11px] text-slate-600 font-medium block mb-1">Age</label>
                 <input
                   type="number"
+                  aria-label="Family member age"
                   min="0"
                   max="120"
                   value={newAge}
@@ -163,6 +166,7 @@ export const FamilyManagerModal: React.FC<FamilyManagerModalProps> = ({
               <label className="text-[11px] text-slate-600 font-medium block mb-1">Health Conditions (e.g., Asthma, Bronchitis, Allergies)</label>
               <input
                 type="text"
+                aria-label="Pre-existing respiratory or health conditions"
                 placeholder="Asthma, pollen allergy, cardiac sensitivity, None"
                 value={newCondition}
                 onChange={(e) => setNewCondition(e.target.value)}

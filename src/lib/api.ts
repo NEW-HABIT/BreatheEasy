@@ -6,6 +6,27 @@ const API_BASE = '/api';
 /**
  * Autocomplete search for global cities using Open-Meteo Geocoding
  */
+interface OpenMeteoGeoItem {
+  name: string;
+  country?: string;
+  country_code?: string;
+  admin1?: string;
+  latitude: number;
+  longitude: number;
+}
+
+interface BackendCommunityPost {
+  id: string;
+  author: string;
+  neighborhood: string;
+  title: string;
+  content: string;
+  postType?: 'initiative' | 'tip' | 'alert' | 'event';
+  participantsCount?: number;
+  upvotes?: number;
+  createdAt?: string;
+}
+
 export async function searchCitySuggestions(query: string): Promise<{
   name: string;
   country: string;
@@ -21,7 +42,7 @@ export async function searchCitySuggestions(query: string): Promise<{
     if (!res.ok) return [];
     const data = await res.json();
     if (!data.results) return [];
-    return data.results.map((r: any) => ({
+    return data.results.map((r: OpenMeteoGeoItem) => ({
       name: r.name,
       country: r.country || 'Global',
       admin: r.admin1 || '',
@@ -52,7 +73,7 @@ async function fetchDirectOpenMeteo(city: string, lat?: number, lng?: number): P
       if (geoRes.ok) {
         const geoData = await geoRes.json();
         if (geoData.results && geoData.results.length > 0) {
-          const indianResult = geoData.results.find((r: any) => r.country_code?.toUpperCase() === 'IN' || r.country?.toLowerCase() === 'india');
+          const indianResult = geoData.results.find((r: OpenMeteoGeoItem) => r.country_code?.toUpperCase() === 'IN' || r.country?.toLowerCase() === 'india');
           const chosen = indianResult || geoData.results[0];
           latitude = chosen.latitude;
           longitude = chosen.longitude;
@@ -238,8 +259,8 @@ export async function fetchLiveAqi(city?: string, lat?: number, lng?: number): P
 
 export async function askAdvisorAI(payload: {
   question: string;
-  aqiData: any;
-  familyMembers: any[];
+  aqiData: AqiData;
+  familyMembers: FamilyMember[];
   customApiKey?: string;
 }): Promise<{ text: string; impactHighlight?: { co2SavedKg?: number; pm25DropPercent?: number } }> {
   try {
@@ -271,7 +292,7 @@ export async function askAdvisorAI(payload: {
   }
 }
 
-export async function generateDailyRoutine(aqiData: any, familyMembers: any[]): Promise<RoutineItem[]> {
+export async function generateDailyRoutine(aqiData: AqiData, familyMembers: FamilyMember[]): Promise<RoutineItem[]> {
   try {
     const res = await fetch(`${API_BASE}/routine`, {
       method: 'POST',
@@ -322,7 +343,7 @@ export async function fetchCommunityPosts(): Promise<CommunityPost[]> {
     const res = await fetch(`${API_BASE}/community`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return (data.posts || []).map((p: any) => ({
+    return (data.posts || []).map((p: BackendCommunityPost) => ({
       id: p.id,
       author: p.author,
       neighborhood: p.neighborhood,

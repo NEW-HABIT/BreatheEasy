@@ -233,6 +233,7 @@ Feel free to ask me anything:
         >
           <input
             type="text"
+            aria-label={`Ask about air quality in ${aqiData.city}, fresh air windows, or family tips`}
             placeholder={`Ask about air quality in ${aqiData.city}, fresh air windows, or family tips...`}
             value={input}
             onChange={(e) => setInput(e.target.value)}

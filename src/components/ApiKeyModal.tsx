@@ -89,6 +89,7 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
             </div>
             <input
               type="password"
+              aria-label="Google Gemini API key input"
               placeholder="AIzaSy..."
               value={keyInput}
               onChange={(e) => setKeyInput(e.target.value)}

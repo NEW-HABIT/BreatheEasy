@@ -78,11 +78,13 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4 text-xs sm:text-sm">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Full Name</label>
+              <label htmlFor="reg-name" className="text-xs font-semibold text-slate-700 block mb-1">Full Name</label>
               <div className="relative">
                 <input
+                  id="reg-name"
                   type="text"
                   required
+                  aria-label="Full Name"
                   placeholder="e.g. Priya Sharma"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -93,11 +95,13 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">City / Region</label>
+              <label htmlFor="reg-city" className="text-xs font-semibold text-slate-700 block mb-1">City / Region</label>
               <div className="relative">
                 <input
+                  id="reg-city"
                   type="text"
                   required
+                  aria-label="City or Region"
                   placeholder="e.g. New Delhi"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
@@ -110,11 +114,13 @@ export default function RegisterPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Email Address</label>
+              <label htmlFor="reg-email" className="text-xs font-semibold text-slate-700 block mb-1">Email Address</label>
               <div className="relative">
                 <input
+                  id="reg-email"
                   type="email"
                   required
+                  aria-label="Email Address"
                   placeholder="priya@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -125,11 +131,13 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label className="text-xs font-semibold text-slate-700 block mb-1">Password</label>
+              <label htmlFor="reg-pass" className="text-xs font-semibold text-slate-700 block mb-1">Password</label>
               <div className="relative">
                 <input
+                  id="reg-pass"
                   type="password"
                   required
+                  aria-label="Password"
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}

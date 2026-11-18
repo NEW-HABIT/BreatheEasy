@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import type { Map as LeafletMap, LayerGroup, Circle as LeafletCircle } from 'leaflet';
 import { AqiData } from '@/types';
 import { getAqiCategory, INDIAN_METROS } from '@/lib/aqiData';
 import { 
@@ -15,6 +16,14 @@ interface RealtimeAqiMapProps {
   isLocating?: boolean;
 }
 
+interface StationInfo {
+  name: string;
+  aqi: number;
+  lat: number;
+  lng: number;
+  pm25: number;
+}
+
 export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
   aqiData,
   onLocateMe,
@@ -22,9 +31,9 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
   isLocating = false
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersGroupRef = useRef<any>(null);
-  const plumeCircleRef = useRef<any>(null);
+  const mapInstanceRef = useRef<LeafletMap | null>(null);
+  const markersGroupRef = useRef<LayerGroup | null>(null);
+  const plumeCircleRef = useRef<LeafletCircle | null>(null);
 
   const [activeLayers, setActiveLayers] = useState({
     plume: true,
@@ -32,7 +41,7 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
     shelters: true,
     wind: true
   });
-  const [selectedStation, setSelectedStation] = useState<any | null>(null);
+  const [selectedStation, setSelectedStation] = useState<StationInfo | null>(null);
 
   const cat = getAqiCategory(aqiData.aqi);
   const lat = aqiData.latitude ?? 28.6139;
