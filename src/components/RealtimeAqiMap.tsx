@@ -206,6 +206,7 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
     return () => {
       isMounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lat, lng, aqiData, activeLayers]);
 
   // Recenter map on active location

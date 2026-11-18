@@ -9,6 +9,11 @@
     "build": "next build",
     "start": "next start",
     "start:all": "python run.py",
+    "test": "node --test tests/*.test.mjs",
+    "test:all": "node --test tests/*.test.mjs && python -m unittest discover -s backend/tests",
+    "test:frontend": "node --test tests/*.test.mjs",
+    "test:backend": "python -m unittest discover -s backend/tests",
+    "test:coverage": "node --test --experimental-test-coverage tests/*.test.mjs",
     "lint": "next lint"
   },
   "dependencies": {
@@ -29,6 +34,8 @@
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.15",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "typescript": "^5.6.3"

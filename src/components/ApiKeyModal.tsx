@@ -33,7 +33,12 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/30 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="glass-card-strong rounded-3xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden border border-white">
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="api-key-modal-title"
+        className="glass-card-strong rounded-3xl w-full max-w-md flex flex-col shadow-2xl overflow-hidden border border-white"
+      >
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-emerald-100 bg-white/70">
           <div className="flex items-center space-x-2.5">
@@ -41,12 +46,13 @@ export const ApiKeyModal: React.FC<ApiKeyModalProps> = ({
               <Key className="h-5 w-5" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Google Gemini API Key</h3>
+              <h3 id="api-key-modal-title" className="text-base font-bold text-slate-900">Google Gemini API Key</h3>
               <p className="text-xs text-slate-500">Enable live Google Gemini 2.0 Flash engine</p>
             </div>
           </div>
           <button
             onClick={onClose}
+            aria-label="Close API key modal"
             className="p-1.5 rounded-xl text-slate-400 hover:text-slate-800 hover:bg-slate-100 transition"
           >
             <X className="h-5 w-5" />

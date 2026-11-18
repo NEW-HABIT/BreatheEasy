@@ -36,6 +36,7 @@ export const IntroAnimation: React.FC<IntroAnimationProps> = ({ onComplete, forc
       clearTimeout(timerPhase);
       clearTimeout(timerFade);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [forceShow]);
 
   const handleDismiss = () => {

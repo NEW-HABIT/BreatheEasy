@@ -100,6 +100,7 @@ Feel free to ask me anything:
       handleSend(externalPrompt);
       if (onClearExternalPrompt) onClearExternalPrompt();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [externalPrompt]);
 
   const suggestionPills = [

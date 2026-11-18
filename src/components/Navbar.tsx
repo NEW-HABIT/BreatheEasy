@@ -143,6 +143,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           type="button"
                           onClick={() => { setSearchInput(''); setSuggestions([]); }}
                           className="absolute right-2 text-slate-400 hover:text-slate-700"
+                          aria-label="Clear city search text"
                         >
                           <X className="h-3 w-3" />
                         </button>
@@ -151,6 +152,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <button
                       type="submit"
                       className="px-2.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold rounded-xl shadow-sm transition"
+                      aria-label="Submit city search"
                     >
                       Go
                     </button>
@@ -158,6 +160,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                       type="button"
                       onClick={() => { setIsSearching(false); setSuggestions([]); }}
                       className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                      aria-label="Close city search box"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -220,6 +223,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={() => setIsSearching(true)}
                     className="flex items-center space-x-1.5 glass-card hover:bg-emerald-50/80 px-3 py-1.5 rounded-xl border border-emerald-200/60 transition group shadow-sm text-xs font-bold text-slate-800"
                     title="Click to search any global city"
+                    aria-label={`Search city, currently selected: ${selectedCity}`}
                   >
                     <Search className="h-3.5 w-3.5 text-emerald-600 group-hover:scale-110 transition" />
                     <span className="max-w-[100px] sm:max-w-[150px] truncate">{selectedCity}</span>
@@ -231,6 +235,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     onClick={onGpsLocate}
                     className="p-1.5 glass-card hover:bg-emerald-50 text-emerald-700 rounded-xl transition border border-emerald-200/60 shadow-sm"
                     title="Detect GPS Location"
+                    aria-label="Detect my current location with GPS"
                   >
                     <MapPin className="h-4 w-4" />
                   </button>
@@ -242,6 +247,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div 
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border glass-pill shadow-sm"
               style={{ borderColor: `${cat.color}40`, backgroundColor: `${cat.color}15` }}
+              role="status"
+              aria-label={`Current Air Quality Index: ${aqiData.aqi}, Category: ${cat.category}`}
             >
               <span className="h-2 w-2 rounded-full animate-ping" style={{ backgroundColor: cat.color }} />
               <span className="text-xs font-bold text-slate-900">AQI {aqiData.aqi}</span>
@@ -259,6 +266,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   : 'glass-card text-slate-600 hover:text-slate-900'
               }`}
               title="Configure Gemini API Key"
+              aria-label="Configure Google Gemini API Key"
             >
               <Key className="h-3.5 w-3.5 text-emerald-600" />
               <span className="hidden sm:inline">{hasCustomApiKey ? 'Gemini 2.0' : 'API Key'}</span>
@@ -269,6 +277,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={onOpenFamilyModal}
               className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs sm:text-sm font-semibold shadow-sm transition"
               title="Manage Family Health Profiles"
+              aria-label="Manage Family Health Profiles"
             >
               <Users className="h-4 w-4" />
               <span className="hidden md:inline">Family Shield</span>
@@ -288,6 +297,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   onClick={logout}
                   className="p-1 text-slate-400 hover:text-rose-600 transition"
                   title="Sign Out"
+                  aria-label="Sign out of account"
                 >
                   <LogOut className="h-3.5 w-3.5" />
                 </button>
@@ -314,13 +324,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Navigation Tabs */}
-        <nav className="flex space-x-1.5 overflow-x-auto py-2 border-t border-slate-100 no-scrollbar">
+        <nav className="flex space-x-1.5 overflow-x-auto py-2 border-t border-slate-100 no-scrollbar" role="tablist" aria-label="Dashboard views">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
             return (
               <button
                 key={item.id}
+                role="tab"
+                aria-selected={isActive}
+                aria-label={`View ${item.label} section`}
                 onClick={() => setActiveTab(item.id)}
                 className={`flex items-center space-x-2 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold whitespace-nowrap transition-all ${
                   isActive

@@ -47,7 +47,19 @@ def get_aqi_category_info(aqi: int) -> dict:
             "advice": "Emergency winter smog conditions. Avoid all outdoor physical activity. Keep interior doors closed and damp towel sealed."
         }
 
+def assess_inversion_risk(wind_speed: float, humidity: float = 70.0, pressure: float = 1013.0) -> tuple:
+    if wind_speed < 5.0 and humidity > 75 and pressure > 1014:
+        return "Severe", "Near-zero ground wind (<5 km/h) & high atmospheric pressure are trapping toxic PM2.5 at breathing level."
+    elif wind_speed < 8.5 and humidity > 65:
+        return "High", "Stagnant boundary layer: Micro-particulates accumulating due to low air velocity."
+    elif wind_speed > 16.0:
+        return "Low", "Active atmospheric mixing: Smog plume is rapidly being dispersed by fresh wind currents."
+    else:
+        return "Moderate", "Moderate air movement. Natural ventilation is safe during mid-day solar heating window."
+
 def degrees_to_compass(deg: float) -> str:
+    if deg is None:
+        return "Calm"
     val = int((deg / 22.5) + 0.5)
     arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
     return arr[(val % 16)]
@@ -153,19 +165,7 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
         dew_point = round(weather_current.get("dew_point_2m") or 12.0, 1)
         weather_code = int(weather_current.get("weather_code") or 0)
         weather_desc = get_weather_desc(weather_code)
-
-        if wind_speed < 5.0 and humidity > 75 and pressure > 1014:
-            inversion_risk = "Severe"
-            inversion_desc = "Near-zero ground wind (<5 km/h) & high atmospheric pressure are trapping toxic PM2.5 at breathing level."
-        elif wind_speed < 8.5 and humidity > 65:
-            inversion_risk = "High"
-            inversion_desc = "Stagnant boundary layer: Micro-particulates accumulating due to low air velocity."
-        elif wind_speed > 16.0:
-            inversion_risk = "Low"
-            inversion_desc = "Active atmospheric mixing: Smog plume is rapidly being dispersed by fresh wind currents."
-        else:
-            inversion_risk = "Moderate"
-            inversion_desc = "Moderate air movement. Natural ventilation is safe during mid-day solar heating window."
+        inversion_risk, inversion_desc = assess_inversion_risk(wind_speed, humidity, pressure)
 
         # 3. Process 24-hour diurnal curve
         hourly_times = aqi_data.get("hourly", {}).get("time", [])
