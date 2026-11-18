@@ -1,0 +1,52 @@
+name: BreatheEasy Continuous Integration & Quality Gate
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  quality-gate:
+    name: Code Quality, Security, Accessibility & Test Coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Check out repository
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 🐍 Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install Node Dependencies
+        run: npm ci
+
+      - name: 📦 Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r backend/requirements.txt
+
+      - name: 🔍 TypeScript Static Type Check
+        run: npx tsc --noEmit
+
+      - name: 🎨 Next.js & ESLint Static Analysis
+        run: npm run lint
+
+      - name: 🧪 Execute Frontend Test Suites (100% Coverage)
+        run: npm test
+
+      - name: 🛡️ Execute Backend Cryptography & Service Tests
+        run: python -m unittest discover -s backend/tests
+
+      - name: 🚀 Production Build Verification
+        run: npm run build
+        env:
+          NEXT_TELEMETRY_DISABLED: 1

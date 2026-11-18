@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AqiData, FamilyMember, RoutineItem } from '@/types';
+import type { AqiData, FamilyMember, RoutineItem } from '../types';
 
 export async function askAirQualityAdvisor({
   question,
@@ -81,7 +81,7 @@ CRITICAL INSTRUCTIONS:
   return generateExpertFallbackResponse(question, aqiData, familyMembers);
 }
 
-function generateExpertFallbackResponse(
+export function generateExpertFallbackResponse(
   question: string,
   aqiData: AqiData,
   familyMembers: FamilyMember[]
