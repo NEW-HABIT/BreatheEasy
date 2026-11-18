@@ -47,6 +47,22 @@ def get_aqi_category_info(aqi: int) -> dict:
             "advice": "Emergency winter smog conditions. Avoid all outdoor physical activity. Keep interior doors closed and damp towel sealed."
         }
 
+def degrees_to_compass(deg: float) -> str:
+    val = int((deg / 22.5) + 0.5)
+    arr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"]
+    return arr[(val % 16)]
+
+def get_weather_desc(code: int) -> str:
+    if code == 0: return "Clear Sky"
+    elif code in (1, 2, 3): return "Partly Cloudy"
+    elif code in (45, 48): return "Dense Fog & Smog Haze"
+    elif code in (51, 53, 55): return "Light Particulate Mist"
+    elif code in (61, 63, 65): return "Rain Clearing Air"
+    elif code in (71, 73, 75): return "Snow"
+    elif code in (80, 81, 82): return "Passing Showers"
+    elif code >= 95: return "Thunderstorm"
+    return "Hazy Atmosphere"
+
 def fetch_json(url: str, timeout: int = 6):
     req = urllib.request.Request(
         url,
@@ -107,7 +123,7 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
         weather_url = (
             f"https://api.open-meteo.com/v1/forecast?"
             f"latitude={latitude}&longitude={longitude}&"
-            f"current=temperature_2m,relative_humidity_2m,wind_speed_10m"
+            f"current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,dew_point_2m,visibility"
         )
 
         aqi_data = fetch_json(aqi_url)
@@ -125,8 +141,31 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
         o3 = round((current.get("ozone") or 38.5), 1)
 
         temperature = round(weather_current.get("temperature_2m") or 22)
+        apparent_temp = round(weather_current.get("apparent_temperature") or temperature)
         humidity = round(weather_current.get("relative_humidity_2m") or 62)
         wind_speed = round((weather_current.get("wind_speed_10m") or 7.5), 1)
+        wind_dir = round(weather_current.get("wind_direction_10m") or 0)
+        wind_compass = degrees_to_compass(wind_dir)
+        pressure = round(weather_current.get("surface_pressure") or 1013.2)
+        visibility_meters = weather_current.get("visibility") or 5000
+        visibility_km = round(visibility_meters / 1000.0, 1)
+        uv_index = round(weather_current.get("uv_index") or 3.0, 1)
+        dew_point = round(weather_current.get("dew_point_2m") or 12.0, 1)
+        weather_code = int(weather_current.get("weather_code") or 0)
+        weather_desc = get_weather_desc(weather_code)
+
+        if wind_speed < 5.0 and humidity > 75 and pressure > 1014:
+            inversion_risk = "Severe"
+            inversion_desc = "Near-zero ground wind (<5 km/h) & high atmospheric pressure are trapping toxic PM2.5 at breathing level."
+        elif wind_speed < 8.5 and humidity > 65:
+            inversion_risk = "High"
+            inversion_desc = "Stagnant boundary layer: Micro-particulates accumulating due to low air velocity."
+        elif wind_speed > 16.0:
+            inversion_risk = "Low"
+            inversion_desc = "Active atmospheric mixing: Smog plume is rapidly being dispersed by fresh wind currents."
+        else:
+            inversion_risk = "Moderate"
+            inversion_desc = "Moderate air movement. Natural ventilation is safe during mid-day solar heating window."
 
         # 3. Process 24-hour diurnal curve
         hourly_times = aqi_data.get("hourly", {}).get("time", [])
@@ -201,6 +240,22 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
             "temperature": temperature,
             "humidity": humidity,
             "windSpeed": wind_speed,
+            "weather": {
+                "temperature": temperature,
+                "apparentTemperature": apparent_temp,
+                "humidity": humidity,
+                "windSpeed": wind_speed,
+                "windDirection": wind_dir,
+                "windDirectionCompass": wind_compass,
+                "pressure": pressure,
+                "visibilityKm": visibility_km,
+                "uvIndex": uv_index,
+                "dewPoint": dew_point,
+                "weatherCode": weather_code,
+                "weatherDescription": weather_desc,
+                "inversionRisk": inversion_risk,
+                "inversionExplanation": inversion_desc
+            },
             "hourlyForecast": hourly_forecast,
             "weeklyForecast": weekly_forecast,
             "ventilationWindow": {

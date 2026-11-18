@@ -15,6 +15,23 @@ export interface PollutantBreakdown {
   o3: number;   // ppb
 }
 
+export interface WeatherData {
+  temperature: number;
+  apparentTemperature: number;
+  humidity: number;
+  windSpeed: number;
+  windDirection: number;
+  windDirectionCompass: string;
+  pressure: number;
+  visibilityKm: number;
+  uvIndex: number;
+  dewPoint: number;
+  weatherCode: number;
+  weatherDescription: string;
+  inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe';
+  inversionExplanation: string;
+}
+
 export interface AqiData {
   city: string;
   country: string;
@@ -28,6 +45,7 @@ export interface AqiData {
   temperature: number;
   humidity: number;
   windSpeed: number;
+  weather?: WeatherData;
   hourlyForecast: { time: string; aqi: number; pm25: number }[];
   weeklyForecast: { day: string; aqi: number; category: AqiCategory }[];
   ventilationWindow: { start: string; end: string; advice: string };

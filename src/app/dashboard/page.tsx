@@ -8,6 +8,7 @@ import { AlertBanner } from '@/components/AlertBanner';
 import { AqiGauge } from '@/components/AqiGauge';
 import { PollutantCards } from '@/components/PollutantCards';
 import { TrendChart } from '@/components/TrendChart';
+import { WeatherCard } from '@/components/WeatherCard';
 import { FamilyRiskCards } from '@/components/FamilyRiskCards';
 import { FamilyManagerModal } from '@/components/FamilyManagerModal';
 import { ApiKeyModal } from '@/components/ApiKeyModal';
@@ -335,6 +336,9 @@ export default function DashboardPage() {
                   </div>
                 </div>
 
+                {/* Live Weather & Atmospheric Inversion Telemetry */}
+                <WeatherCard aqiData={aqiData} />
+
                 {/* Real-Time Atmospheric Satellite & Dispersion Map */}
                 <RealtimeAqiMap
                   aqiData={aqiData}
@@ -510,6 +514,7 @@ export default function DashboardPage() {
                   onSelectCity={(city) => setSelectedCity(city)}
                   isLocating={isLocatingModalOpen}
                 />
+                <WeatherCard aqiData={aqiData} />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                   <AqiGauge aqiData={aqiData} />
                   <PollutantCards pollutants={aqiData.pollutants} />

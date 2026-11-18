@@ -68,9 +68,9 @@ async function fetchDirectOpenMeteo(city: string, lat?: number, lng?: number): P
       resolvedCity = city || 'New Delhi';
     }
 
-    // 2. Fetch live atmospheric sensors
+    // 2. Fetch live atmospheric and full meteorological sensors
     const aqiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${latitude}&longitude=${longitude}&current=us_aqi,pm2_5,pm10,carbon_monoxide,nitrogen_dioxide,sulphur_dioxide,ozone&hourly=us_aqi,pm2_5&forecast_days=7`;
-    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,wind_speed_10m`;
+    const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,surface_pressure,wind_speed_10m,wind_direction_10m,wind_gusts_10m,uv_index,dew_point_2m,visibility`;
 
     const [aqiRes, weatherRes] = await Promise.all([
       fetch(aqiUrl),
@@ -93,6 +93,42 @@ async function fetchDirectOpenMeteo(city: string, lat?: number, lng?: number): P
     const o3 = Math.round((currentAqi.ozone ?? 45.0) * 10) / 10;
 
     const catMeta = getAqiCategory(aqi);
+
+    // Weather Metrics
+    const temperature = Math.round(currentWeather.temperature_2m ?? 22);
+    const apparentTemperature = Math.round(currentWeather.apparent_temperature ?? temperature);
+    const humidity = Math.round(currentWeather.relative_humidity_2m ?? 60);
+    const windSpeed = Math.round((currentWeather.wind_speed_10m ?? 8.5) * 10) / 10;
+    const windDirection = Math.round(currentWeather.wind_direction_10m ?? 310);
+    const pressure = Math.round(currentWeather.surface_pressure ?? 1013);
+    const visibilityKm = Math.round(((currentWeather.visibility ?? 4500) / 1000) * 10) / 10;
+    const uvIndex = Math.round((currentWeather.uv_index ?? 3.2) * 10) / 10;
+    const dewPoint = Math.round((currentWeather.dew_point_2m ?? 12.0) * 10) / 10;
+    const weatherCode = Number(currentWeather.weather_code ?? 0);
+
+    const compassArr = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+    const compassIdx = Math.round(windDirection / 22.5) % 16;
+    const windDirectionCompass = compassArr[compassIdx];
+
+    let weatherDescription = "Clear Sky";
+    if (weatherCode in [1, 2, 3]) weatherDescription = "Partly Cloudy";
+    else if (weatherCode in [45, 48]) weatherDescription = "Dense Fog & Smog Haze";
+    else if (weatherCode in [51, 53, 55]) weatherDescription = "Light Particulate Mist";
+    else if (weatherCode in [61, 63, 65]) weatherDescription = "Rain Scrubbing Air";
+    else if (weatherCode >= 80) weatherDescription = "Passing Showers";
+
+    let inversionRisk: 'Low' | 'Moderate' | 'High' | 'Severe' = 'Moderate';
+    let inversionExplanation = 'Moderate air movement. Natural ventilation is safe during mid-day solar heating window.';
+    if (windSpeed < 5.0 && humidity > 75 && pressure > 1014) {
+      inversionRisk = 'Severe';
+      inversionExplanation = 'Near-zero ground wind (<5 km/h) & high atmospheric pressure trap toxic PM2.5 in the breathing zone.';
+    } else if (windSpeed < 8.5 && humidity > 65) {
+      inversionRisk = 'High';
+      inversionExplanation = 'Stagnant boundary layer: Micro-particulates accumulating due to low air velocity.';
+    } else if (windSpeed > 16.0) {
+      inversionRisk = 'Low';
+      inversionExplanation = 'Strong wind currents are actively breaking the boundary layer and dispersing the smog plume.';
+    }
 
     // Hourly
     const hourlyTimes: string[] = aqiJson.hourly?.time || [];
@@ -135,9 +171,25 @@ async function fetchDirectOpenMeteo(city: string, lat?: number, lng?: number): P
       primaryPollutant: pm10 > pm25 * 1.5 ? 'PM10' : 'PM2.5',
       pollutants: { pm25, pm10, no2, so2, co, o3 },
       updatedAt: `Live (${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })})`,
-      temperature: Math.round(currentWeather.temperature_2m ?? 22),
-      humidity: Math.round(currentWeather.relative_humidity_2m ?? 60),
-      windSpeed: Math.round((currentWeather.wind_speed_10m ?? 8.5) * 10) / 10,
+      temperature,
+      humidity,
+      windSpeed,
+      weather: {
+        temperature,
+        apparentTemperature,
+        humidity,
+        windSpeed,
+        windDirection,
+        windDirectionCompass,
+        pressure,
+        visibilityKm,
+        uvIndex,
+        dewPoint,
+        weatherCode,
+        weatherDescription,
+        inversionRisk,
+        inversionExplanation
+      },
       hourlyForecast,
       weeklyForecast,
       ventilationWindow: {
