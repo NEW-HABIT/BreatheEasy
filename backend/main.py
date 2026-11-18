@@ -189,6 +189,11 @@ def get_user_from_auth_header(authorization: Optional[str], db) -> Optional[User
 # Routes — Health
 # ---------------------------------------------------------------------------
 
+@app.get("/", tags=["Health"])
+def root():
+    return {"status": "ok", "service": "BreatheEasy FastAPI Backend", "version": "1.0.0"}
+
+
 @app.get("/api/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "version": "1.0.0"}
