@@ -1,13 +1,29 @@
 # 🌿 BreatheEasy — GenAI Urban Air Quality Assistant
 
-> **Challenge 6 Submission:** Urban Air Quality Assistant  
-> *Helping families and communities navigate severe winter smog and urban air pollution with personalized low-emission routines, indoor air quality hacks, and quantified sustainable impact.*
+> ### 📋 Official Problem Statement
+> **[Challenge 6] Urban Air Quality Assistant**  
+> *"Create a GenAI-powered assistant that helps families and communities navigate severe winter smog and urban air pollution. The application should suggest low-emission daily routines, indoor air quality hacks, and sustainable alternatives tailored to their location and lifestyle, while clearly explaining the direct impact of their choices."*
 
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![Google Gemini API](https://img.shields.io/badge/GenAI-Google%20Gemini%202.0-blue?style=flat&logo=google)](https://ai.google.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.6-blue?style=flat&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat&logo=tailwind-css)](https://tailwindcss.com/)
+[![Tests Passing](https://img.shields.io/badge/Tests-34%20Passing-emerald?style=flat&logo=checkmarx)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
+
+---
+
+## 🎯 1-to-1 Mapping to the Problem Statement
+
+| Problem Statement Requirement | How BreatheEasy Solves It | Source Code / Module |
+| :--- | :--- | :--- |
+| **"GenAI-powered assistant"** | Google Gemini 2.0 with dynamic prompt injection of live $\text{PM}_{2.5}$, weather parameters, and family medical profiles. Has an expert rule-based fallback when offline. | `src/components/AiAdvisorChat.tsx`<br>`src/lib/gemini.ts`<br>`backend/services/ai_service.py` |
+| **"helps families navigate severe winter smog"** | Differentiates clinical risk per family member (pediatric asthma, elderly hypertension, cardiac sensitivity). Calibrates outdoor exposure and airway protection. | `src/components/FamilyRiskCards.tsx`<br>`src/components/FamilyManagerModal.tsx`<br>`src/lib/aqiData.ts` |
+| **"helps communities navigate smog"** | Grassroots Neighborhood Defense Board for carpool pledges, zero biomass burning night patrols, filter group-buys, and community RWA leaderboards. | `src/components/CommunityBoard.tsx`<br>`backend/database.py` |
+| **"suggest low-emission daily routines"** | AI Diurnal Routine planner synchronized with diurnal thermal boundary layer mixing. Shifts exposure chores away from morning/evening spikes into midday solar ventilation windows. | `src/components/RoutinePlanner.tsx`<br>`src/lib/api.ts`<br>`backend/services/ai_service.py` |
+| **"indoor air quality hacks"** | Open-source blueprints for DIY Corsi-Rosenthal HEPA box fan filters (<$15 vs $600 commercial units), damp towel door/window seals, kitchen fume suppression, and phytoremediation. | `src/components/IndoorHacks.tsx`<br>`src/types/index.ts` |
+| **"sustainable alternatives tailored to location & lifestyle"** | Customizes advice by city/GPS coordinates (Open-Meteo live feed) and user lifestyle profile (commute mode, home type, gas vs induction cooking, purifier status). | `src/components/RealtimeAqiMap.tsx`<br>`src/components/SustainableSwaps.tsx`<br>`src/context/AuthContext.tsx` |
+| **"clearly explaining the direct impact of their choices"** | Quantified Impact Engine calculates exact daily/monthly/yearly $\text{kg CO}_2$ saved, $\%$ $\text{PM}_{2.5}$ reduction, and mature tree absorption equivalents based on EPA AP-42 emission factors. | `src/lib/impactCalculator.ts`<br>`src/components/SustainableSwaps.tsx`<br>`backend/services/impact_service.py` |
 
 ---
 

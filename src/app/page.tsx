@@ -141,7 +141,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full glass-pill border border-emerald-200 text-xs font-semibold text-emerald-800 shadow-sm animate-float">
             <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
-            <span>Real-Time Clean Air & Family Wellness Guide</span>
+            <span>[Challenge 6] Urban Air Quality Assistant • GenAI Powered</span>
           </div>
 
           <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 max-w-4xl mx-auto leading-[1.15]">
@@ -150,7 +150,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-base sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
-            Live local air telemetry meets gentle AI guidance. Daily breath routines, personalized family care, easy home hacks, and everyday green habits for fresh, pure air.
+            A GenAI-powered assistant helping families and communities navigate severe winter smog with low-emission daily routines, indoor air quality hacks, and sustainable alternatives with clearly quantified impact.
           </p>
 
           {/* Call to Actions - Structured Flow */}
