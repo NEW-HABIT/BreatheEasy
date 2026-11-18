@@ -53,10 +53,10 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
           attributionControl: false
         });
 
-        // Crisp, light CartoDB Voyager tile layer
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        // Clean, free OpenStreetMap tiles with zero watermark and zero API key needed
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          subdomains: 'abcd'
+          attribution: '&copy; OpenStreetMap'
         }).addTo(map);
 
         // Zoom control on bottom right
