@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { AqiData } from '@/types';
-import { getAqiCategory } from '@/lib/aqiData';
+import { getAqiCategory, INDIAN_METROS } from '@/lib/aqiData';
 import { 
   MapPin, Layers, Navigation, Wind, ShieldCheck, 
   Activity, Compass, Radio, Maximize2, RefreshCw 
@@ -11,12 +11,14 @@ import {
 interface RealtimeAqiMapProps {
   aqiData: AqiData;
   onLocateMe: () => void;
+  onSelectCity?: (city: string) => void;
   isLocating?: boolean;
 }
 
 export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
   aqiData,
   onLocateMe,
+  onSelectCity,
   isLocating = false
 }) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -235,7 +237,32 @@ export const RealtimeAqiMap: React.FC<RealtimeAqiMapProps> = ({
           </p>
         </div>
 
-        {/* Action Controls */}
+        {/* Indian Metros Quick Navigation Chips */}
+      {onSelectCity && (
+        <div className="flex items-center space-x-1.5 overflow-x-auto pb-1 text-xs no-scrollbar border-y border-emerald-100/70 py-2">
+          <span className="text-[11px] font-extrabold text-emerald-800 shrink-0 flex items-center space-x-1 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-200">
+            <span>🇮🇳</span>
+            <span>Indian Cities:</span>
+          </span>
+          {INDIAN_METROS.map((m) => {
+            const isActive = aqiData.city.toLowerCase().includes(m.name.toLowerCase());
+            return (
+              <button
+                key={m.name}
+                type="button"
+                onClick={() => onSelectCity(m.name)}
+                className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition shrink-0 border shadow-sm ${
+                  isActive
+                    ? 'bg-gradient-to-r from-emerald-600 to-teal-600 text-white border-emerald-600 shadow-md shadow-emerald-500/20'
+                    : 'bg-white hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border-slate-200'
+                }`}
+              >
+                {m.name}
+              </button>
+            );
+          })}
+        </div>
+      )}
         <div className="flex items-center space-x-2 shrink-0">
           <button
             onClick={onLocateMe}

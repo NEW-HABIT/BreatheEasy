@@ -47,15 +47,17 @@ async function fetchDirectOpenMeteo(city: string, lat?: number, lng?: number): P
     // 1. Geocode if coordinates missing
     if (latitude === undefined || longitude === undefined) {
       const geoRes = await fetch(
-        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=1&language=en&format=json`
+        `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(city.trim())}&count=5&language=en&format=json`
       );
       if (geoRes.ok) {
         const geoData = await geoRes.json();
-        if (geoData.results && geoData.results[0]) {
-          latitude = geoData.results[0].latitude;
-          longitude = geoData.results[0].longitude;
-          resolvedCity = geoData.results[0].name;
-          resolvedCountry = geoData.results[0].country || 'Global';
+        if (geoData.results && geoData.results.length > 0) {
+          const indianResult = geoData.results.find((r: any) => r.country_code?.toUpperCase() === 'IN' || r.country?.toLowerCase() === 'india');
+          const chosen = indianResult || geoData.results[0];
+          latitude = chosen.latitude;
+          longitude = chosen.longitude;
+          resolvedCity = chosen.name;
+          resolvedCountry = chosen.country || 'India';
         }
       }
     }

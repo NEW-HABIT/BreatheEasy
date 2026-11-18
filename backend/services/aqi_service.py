@@ -78,18 +78,19 @@ def fetch_realtime_aqi(city: str = "New Delhi", lat: float = None, lng: float = 
     elif latitude is None or longitude is None:
         try:
             geo_query = urllib.parse.quote(city)
-            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={geo_query}&count=1&language=en&format=json"
+            geo_url = f"https://geocoding-api.open-meteo.com/v1/search?name={geo_query}&count=5&language=en&format=json"
             geo_data = fetch_json(geo_url)
             if geo_data.get("results"):
-                top_result = geo_data["results"][0]
+                results = geo_data["results"]
+                top_result = next((r for r in results if r.get("country_code", "").upper() == "IN" or r.get("country", "").lower() == "india"), results[0])
                 latitude = top_result["latitude"]
                 longitude = top_result["longitude"]
                 resolved_city = top_result.get("name", city)
-                resolved_country = top_result.get("country", "Global")
+                resolved_country = top_result.get("country", "India")
             else:
                 latitude, longitude = 28.6139, 77.2090
                 resolved_city = city or "New Delhi"
-                resolved_country = "Regional Sensor Grid"
+                resolved_country = "India"
         except Exception as e:
             latitude, longitude = 28.6139, 77.2090
             resolved_city = city or "New Delhi"

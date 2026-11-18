@@ -129,38 +129,71 @@ export default function DashboardPage() {
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords;
-        setLocatingCoords({ lat: latitude, lng: longitude });
+        let finalLat = latitude;
+        let finalLng = longitude;
+        let resolvedCityName = `Location (${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E)`;
+
+        // Check if browser coordinates are within India (Lat 6.0 to 37.5, Lng 68.0 to 97.5)
+        const isWithinIndia = latitude >= 6.0 && latitude <= 37.5 && longitude >= 68.0 && longitude <= 97.5;
+
+        setLocatingCoords({ lat: isWithinIndia ? finalLat : 28.6139, lng: isWithinIndia ? finalLng : 77.2090 });
         setLocatingStep(2);
 
-        // Step 2: Reverse-geocode neighborhood or city name
-        let resolvedCityName = `Location (${latitude.toFixed(2)}°N, ${longitude.toFixed(2)}°E)`;
-        try {
-          const revRes = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
-          );
-          if (revRes.ok) {
-            const revData = await revRes.json();
-            const addr = revData.address;
-            const place = addr?.city || addr?.town || addr?.suburb || addr?.village || addr?.county || addr?.state_district || addr?.state;
-            if (place) {
-              resolvedCityName = place;
+        if (isWithinIndia) {
+          try {
+            const revRes = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            );
+            if (revRes.ok) {
+              const revData = await revRes.json();
+              const addr = revData.address;
+              const place = addr?.city || addr?.town || addr?.suburb || addr?.village || addr?.county || addr?.state_district || addr?.state;
+              if (place) {
+                resolvedCityName = place;
+              }
             }
+          } catch (e) {
+            console.log('Reverse geocoding client fallback:', e);
           }
-        } catch (e) {
-          console.log('Reverse geocoding client fallback:', e);
+        } else {
+          // If desktop browser reported foreign/default coordinates (VPN or Windows desktop default), calibrate to Indian region
+          try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            if (ipRes.ok) {
+              const ipData = await ipRes.json();
+              if (ipData.country_code === 'IN' && ipData.latitude && ipData.longitude) {
+                finalLat = ipData.latitude;
+                finalLng = ipData.longitude;
+                resolvedCityName = ipData.city || 'New Delhi';
+              } else {
+                finalLat = 28.6139;
+                finalLng = 77.2090;
+                resolvedCityName = 'New Delhi';
+              }
+            } else {
+              finalLat = 28.6139;
+              finalLng = 77.2090;
+              resolvedCityName = 'New Delhi';
+            }
+          } catch (e) {
+            finalLat = 28.6139;
+            finalLng = 77.2090;
+            resolvedCityName = 'New Delhi';
+          }
         }
 
+        setLocatingCoords({ lat: finalLat, lng: finalLng });
         setLocatingCity(resolvedCityName);
         setLocatingStep(3);
 
         // Step 3: Fetch Open-Meteo telemetry from backend
-        const data = await fetchLiveAqi(resolvedCityName, latitude, longitude);
+        const data = await fetchLiveAqi(resolvedCityName, finalLat, finalLng);
         if (data) {
           const finalData = {
             ...data,
             city: resolvedCityName,
-            latitude,
-            longitude
+            latitude: finalLat,
+            longitude: finalLng
           };
           setAqiData(finalData);
           setSelectedCity(resolvedCityName);
@@ -306,6 +339,7 @@ export default function DashboardPage() {
                 <RealtimeAqiMap
                   aqiData={aqiData}
                   onLocateMe={handleGpsLocate}
+                  onSelectCity={(city) => setSelectedCity(city)}
                   isLocating={isLocatingModalOpen}
                 />
 
@@ -473,6 +507,7 @@ export default function DashboardPage() {
                 <RealtimeAqiMap
                   aqiData={aqiData}
                   onLocateMe={handleGpsLocate}
+                  onSelectCity={(city) => setSelectedCity(city)}
                   isLocating={isLocatingModalOpen}
                 />
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

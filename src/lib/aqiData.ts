@@ -104,6 +104,20 @@ export function calculateFamilyRisk(member: FamilyMember, aqi: number): {
   };
 }
 
+export const INDIAN_METROS = [
+  { name: 'New Delhi', state: 'Delhi NCR', lat: 28.6139, lng: 77.2090 },
+  { name: 'Mumbai', state: 'Maharashtra', lat: 19.0760, lng: 72.8777 },
+  { name: 'Bengaluru', state: 'Karnataka', lat: 12.9716, lng: 77.5946 },
+  { name: 'Kolkata', state: 'West Bengal', lat: 22.5726, lng: 88.3639 },
+  { name: 'Hyderabad', state: 'Telangana', lat: 17.3850, lng: 78.4867 },
+  { name: 'Chennai', state: 'Tamil Nadu', lat: 13.0827, lng: 80.2707 },
+  { name: 'Pune', state: 'Maharashtra', lat: 18.5204, lng: 73.8567 },
+  { name: 'Ahmedabad', state: 'Gujarat', lat: 23.0225, lng: 72.5714 },
+  { name: 'Lucknow', state: 'Uttar Pradesh', lat: 26.8467, lng: 80.9462 },
+  { name: 'Jaipur', state: 'Rajasthan', lat: 26.9124, lng: 75.7873 },
+  { name: 'Chandigarh', state: 'Punjab/Haryana', lat: 30.7333, lng: 76.7794 }
+];
+
 export const CITIES_DATA: Record<string, AqiData> = {
   'New Delhi': {
     city: 'New Delhi',
