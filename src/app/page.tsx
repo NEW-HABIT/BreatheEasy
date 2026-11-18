@@ -2,18 +2,26 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   Wind, Shield, Sparkles, ArrowRight, Activity, Users, 
-  Leaf, MapPin, CheckCircle, Clock, HeartHandshake, ChevronRight, BarChart3
+  Leaf, MapPin, CheckCircle, Clock, HeartHandshake, ChevronRight, 
+  BarChart3, LogIn, UserPlus, Play, LogOut, CheckCircle2
 } from 'lucide-react';
 import { fetchLiveAqi } from '@/lib/api';
 import { getAqiCategory } from '@/lib/aqiData';
 import { AqiData } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import { IntroAnimation } from '@/components/IntroAnimation';
 
 export default function LandingPage() {
+  const { user, isAuthenticated, login, logout } = useAuth();
+  const router = useRouter();
   const [sampleCity, setSampleCity] = useState('New Delhi');
   const [liveData, setLiveData] = useState<AqiData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDemoLoggingIn, setIsDemoLoggingIn] = useState(false);
+  const [showIntro, setShowIntro] = useState(false);
 
   useEffect(() => {
     async function loadSample() {
@@ -25,14 +33,28 @@ export default function LandingPage() {
     loadSample();
   }, [sampleCity]);
 
+  const handle1ClickDemo = async () => {
+    setIsDemoLoggingIn(true);
+    const res = await login('rajesh.sharma@example.com', 'password123');
+    setIsDemoLoggingIn(false);
+    if (res.success) {
+      router.push('/dashboard');
+    } else {
+      router.push('/auth/login');
+    }
+  };
+
   const cat = liveData ? getAqiCategory(liveData.aqi) : null;
 
   return (
     <div className="min-h-screen flex flex-col selection:bg-emerald-200">
+      {/* 1. Opening Intro Animation */}
+      <IntroAnimation forceShow={showIntro} onComplete={() => setShowIntro(false)} />
+
       {/* Top Glass Header */}
       <header className="sticky top-0 z-40 w-full glass-card border-b border-white/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          <Link href="/" className="flex items-center space-x-3">
             <div className="h-10 w-10 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-green-600 p-0.5 shadow-md shadow-emerald-500/20">
               <div className="h-full w-full bg-white rounded-[14px] flex items-center justify-center">
                 <Leaf className="h-5 w-5 text-emerald-600" />
@@ -43,31 +65,70 @@ export default function LandingPage() {
                 BreatheEasy
               </span>
               <span className="text-[10px] ml-2 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200/60">
-                Eco Shield
+                Fresh Air Shield
               </span>
             </div>
-          </div>
+          </Link>
 
-          <div className="flex items-center space-x-3 sm:space-x-5 text-sm font-medium">
-            <Link href="#features" className="text-slate-600 hover:text-emerald-700 transition hidden sm:inline">
+          {/* Navigation & Auth Buttons */}
+          <div className="flex items-center space-x-2 sm:space-x-4 text-sm font-medium">
+            <Link href="#features" className="text-slate-600 hover:text-emerald-700 transition hidden md:inline">
               Features
             </Link>
-            <Link href="#how-it-works" className="text-slate-600 hover:text-emerald-700 transition hidden sm:inline">
-              How It Works
+            <Link href="#live-preview" className="text-slate-600 hover:text-emerald-700 transition hidden sm:inline">
+              Live Air
             </Link>
-            <Link href="/terms" className="text-slate-500 hover:text-emerald-700 text-xs transition hidden md:inline">
-              Terms
-            </Link>
-            <Link href="/privacy" className="text-slate-500 hover:text-emerald-700 text-xs transition hidden md:inline">
-              Privacy
-            </Link>
-            <Link
-              href="/dashboard"
-              className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02]"
-            >
-              <span>Launch Dashboard</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+
+            {isAuthenticated && user ? (
+              /* Signed in State */
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <span className="text-xs text-slate-600 hidden sm:inline font-semibold">
+                  Hi, {user.name.split(' ')[0]}
+                </span>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-semibold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02]"
+                >
+                  <span>Dashboard</span>
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+                <button
+                  onClick={logout}
+                  title="Sign Out"
+                  className="p-2 rounded-xl glass-card hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition border border-slate-200"
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
+            ) : (
+              /* Unauthenticated State: Clear Sign In / Login Buttons */
+              <div className="flex items-center space-x-2">
+                <Link
+                  href="/auth/login"
+                  className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl glass-card hover:bg-white text-slate-700 hover:text-emerald-700 font-bold text-xs sm:text-sm border border-slate-200/80 shadow-sm transition hover:scale-[1.02]"
+                >
+                  <LogIn className="h-4 w-4 text-emerald-600" />
+                  <span>Sign In</span>
+                </Link>
+
+                <Link
+                  href="/auth/register"
+                  className="hidden sm:flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs sm:text-sm border border-slate-200 transition hover:scale-[1.02]"
+                >
+                  <UserPlus className="h-4 w-4 text-slate-600" />
+                  <span>Register</span>
+                </Link>
+
+                <button
+                  onClick={handle1ClickDemo}
+                  disabled={isDemoLoggingIn}
+                  className="flex items-center space-x-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs sm:text-sm shadow-md shadow-emerald-600/20 transition-all hover:scale-[1.02] disabled:opacity-50"
+                >
+                  <span>{isDemoLoggingIn ? 'Entering...' : '1-Click Demo'}</span>
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -92,15 +153,36 @@ export default function LandingPage() {
             Live local air telemetry meets gentle AI guidance. Daily breath routines, personalized family care, easy home hacks, and everyday green habits for fresh, pure air.
           </p>
 
-          {/* Call to Actions */}
+          {/* Call to Actions - Structured Flow */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4">
-            <Link
-              href="/dashboard"
-              className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-emerald-600/25 transition-all hover:scale-[1.02] flex items-center justify-center space-x-2"
-            >
-              <span>Explore My City&apos;s Air</span>
-              <ArrowRight className="h-5 w-5" />
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-emerald-600/25 transition-all hover:scale-[1.02] flex items-center justify-center space-x-2"
+              >
+                <span>Enter Family Dashboard</span>
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-sm sm:text-base shadow-xl shadow-emerald-600/25 transition-all hover:scale-[1.02] flex items-center justify-center space-x-2"
+                >
+                  <LogIn className="h-5 w-5" />
+                  <span>Sign In to Dashboard</span>
+                </Link>
+
+                <button
+                  onClick={handle1ClickDemo}
+                  disabled={isDemoLoggingIn}
+                  className="w-full sm:w-auto px-6 py-3.5 rounded-2xl glass-card hover:bg-white text-emerald-800 font-bold text-sm sm:text-base border border-emerald-300 transition-all hover:scale-[1.02] shadow-sm flex items-center justify-center space-x-2"
+                >
+                  <Sparkles className="h-4 w-4 text-emerald-600" />
+                  <span>{isDemoLoggingIn ? 'Signing in...' : '1-Click Demo Login'}</span>
+                </button>
+              </>
+            )}
 
             <a
               href="#live-preview"
@@ -110,6 +192,15 @@ export default function LandingPage() {
               <ChevronRight className="h-4 w-4 text-slate-400" />
             </a>
           </div>
+
+          {!isAuthenticated && (
+            <p className="text-xs text-slate-400">
+              New here?{' '}
+              <Link href="/auth/register" className="text-emerald-700 hover:underline font-bold">
+                Create a free family account →
+              </Link>
+            </p>
+          )}
 
           {/* Stats strip */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto pt-10">
@@ -298,6 +389,54 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Bottom CTA Card */}
+      <section className="max-w-4xl mx-auto px-4 sm:px-6 w-full pb-16">
+        <div className="glass-card-strong rounded-3xl p-8 sm:p-10 shadow-2xl border border-white text-center space-y-4 relative overflow-hidden">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 mx-auto flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+            <Shield className="h-6 w-6" />
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            {isAuthenticated ? 'Your Family Dashboard is Ready' : 'Start Protecting Your Family in 10 Seconds'}
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-600 max-w-xl mx-auto leading-relaxed">
+            {isAuthenticated 
+              ? 'Return to your dashboard to review live air forecasts and today’s family safety protocols.'
+              : 'Sign in with your email or jump straight in with our instant 1-click evaluator demo.'
+            }
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+            {isAuthenticated ? (
+              <Link
+                href="/dashboard"
+                className="px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition hover:scale-105 flex items-center space-x-2"
+              >
+                <span>Open Dashboard</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            ) : (
+              <>
+                <Link
+                  href="/auth/login"
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/20 transition hover:scale-105 flex items-center space-x-2"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Sign In</span>
+                </Link>
+
+                <button
+                  onClick={handle1ClickDemo}
+                  disabled={isDemoLoggingIn}
+                  className="px-6 py-3 rounded-2xl glass-card hover:bg-white text-emerald-800 font-bold text-sm border border-emerald-300 shadow-sm transition hover:scale-105 flex items-center space-x-2"
+                >
+                  <Sparkles className="h-4 w-4 text-emerald-600" />
+                  <span>{isDemoLoggingIn ? 'Entering...' : '1-Click Demo Login'}</span>
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="mt-auto border-t border-emerald-100 glass-card-strong py-8 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -307,10 +446,17 @@ export default function LandingPage() {
             <span>• Urban Air Quality Assistant</span>
           </div>
 
-          <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-4 sm:space-x-6">
+            <button
+              onClick={() => setShowIntro(true)}
+              className="flex items-center space-x-1 text-emerald-700 hover:text-emerald-900 font-semibold transition"
+            >
+              <Play className="h-3.5 w-3.5" />
+              <span>Replay Intro</span>
+            </button>
             <Link href="/terms" className="hover:text-emerald-700 transition">Terms of Service</Link>
             <Link href="/privacy" className="hover:text-emerald-700 transition">Privacy Policy</Link>
-            <Link href="/dashboard" className="hover:text-emerald-700 font-semibold text-emerald-700 transition">Launch App</Link>
+            <Link href="/dashboard" className="hover:text-emerald-700 font-semibold text-emerald-700 transition">Dashboard</Link>
           </div>
 
           <span className="text-[11px] text-slate-400">Challenge 6: Urban Air Quality Assistant • Google Gemini API</span>

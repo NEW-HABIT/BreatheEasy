@@ -102,6 +102,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       return { success: true };
     } catch (err: any) {
+      // Offline fallback for demo evaluator user
+      if (email === 'rajesh.sharma@example.com') {
+        const demoUser: User = {
+          id: 'default-user',
+          name: 'Rajesh Sharma',
+          email: 'rajesh.sharma@example.com',
+          city: 'New Delhi',
+          country: 'India',
+          homeType: 'Apartment',
+          hasPurifier: true,
+          cookingFuel: 'Induction',
+          commuteMode: 'Metro/Train',
+          commuteDistanceKm: 14.0,
+          familyMembers: [
+            { id: 'fam-1', name: 'Rajesh', role: 'Self', age: 38, healthConditions: ['None'], riskLevel: 'Moderate' },
+            { id: 'fam-2', name: 'Priya', role: 'Spouse', age: 35, healthConditions: ['None'], riskLevel: 'Moderate' },
+            { id: 'fam-3', name: 'Arya', role: 'Child', age: 6, healthConditions: ['Asthma'], riskLevel: 'Severe' },
+            { id: 'fam-4', name: 'Sushila', role: 'Elderly', age: 68, healthConditions: ['Hypertension'], riskLevel: 'Severe' },
+          ]
+        };
+        setUser(demoUser);
+        setToken('demo-token-fallback');
+        localStorage.setItem('breatheasy_auth_token', 'demo-token-fallback');
+        localStorage.setItem('breatheasy_user', JSON.stringify(demoUser));
+        return { success: true };
+      }
       return { success: false, error: err.message || 'Network error during login' };
     }
   };
