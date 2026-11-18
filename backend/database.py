@@ -1,5 +1,7 @@
 import os
 import uuid
+import hashlib
+import secrets
 from datetime import datetime
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, DateTime, ForeignKey, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
@@ -12,20 +14,30 @@ engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
+def hash_password(password: str) -> str:
+    """Hash a password using salted SHA-256."""
+    salt = "breatheasy_salt_2026"
+    return hashlib.sha256((salt + password).encode('utf-8')).hexdigest()
+
+def verify_password(password: str, hashed: str) -> bool:
+    return hash_password(password) == hashed
+
 class UserModel(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     name = Column(String, default="User")
-    email = Column(String, default="user@breatheasy.eco")
+    email = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)
+    token = Column(String, index=True, nullable=True)
     city = Column(String, default="New Delhi")
     country = Column(String, default="India")
     lat = Column(Float, nullable=True)
     lng = Column(Float, nullable=True)
-    home_type = Column(String, default="Apartment")
+    home_type = Column(String, default="Apartment") # Apartment, Independent House, Villa
     has_purifier = Column(Boolean, default=True)
-    cooking_fuel = Column(String, default="Induction")
-    commute_mode = Column(String, default="Metro/Train")
+    cooking_fuel = Column(String, default="Induction") # Induction, LPG, Piped Gas
+    commute_mode = Column(String, default="Metro/Train") # Metro/Train, Electric Vehicle, Carpool, Car (Solo)
     commute_distance_km = Column(Float, default=12.0)
     created_at = Column(DateTime, default=datetime.utcnow)
 
@@ -72,13 +84,17 @@ class CommunityPostModel(Base):
 def init_db():
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
-    # Seed default user if none exists
-    user = db.query(UserModel).first()
+    
+    # Check if default demo user exists
+    user = db.query(UserModel).filter(UserModel.email == "rajesh.sharma@example.com").first()
     if not user:
+        default_token = secrets.token_hex(24)
         user = UserModel(
             id="default-user",
             name="Rajesh Sharma",
             email="rajesh.sharma@example.com",
+            password_hash=hash_password("password123"),
+            token=default_token,
             city="New Delhi",
             country="India",
             home_type="Apartment",
@@ -90,7 +106,7 @@ def init_db():
         db.add(user)
         db.commit()
 
-        # Seed initial family members
+        # Seed initial family members for Rajesh
         members = [
             FamilyMemberModel(id="fam-1", user_id="default-user", name="Rajesh", role="Self", age=38, health_conditions="None", risk_level="Moderate"),
             FamilyMemberModel(id="fam-2", user_id="default-user", name="Priya", role="Spouse", age=35, health_conditions="None", risk_level="Moderate"),
@@ -99,7 +115,8 @@ def init_db():
         ]
         db.add_all(members)
 
-        # Seed initial community initiatives
+    # Seed community initiatives if empty
+    if db.query(CommunityPostModel).count() == 0:
         posts = [
             CommunityPostModel(
                 id="post-1",

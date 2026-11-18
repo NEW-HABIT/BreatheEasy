@@ -1,14 +1,15 @@
 """
 BreatheEasy — FastAPI Backend
-Production-ready urban air quality assistant API.
+Production-ready urban air quality assistant API with full User Authentication & Profile module.
 """
 
 import uuid
+import secrets
 from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
@@ -17,6 +18,8 @@ from database import (
     UserModel,
     FamilyMemberModel,
     CommunityPostModel,
+    hash_password,
+    verify_password,
     init_db,
 )
 from services.aqi_service import fetch_realtime_aqi
@@ -57,6 +60,24 @@ app.add_middleware(
 # ---------------------------------------------------------------------------
 # Pydantic models
 # ---------------------------------------------------------------------------
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+    city: Optional[str] = "New Delhi"
+    country: Optional[str] = "India"
+    home_type: Optional[str] = "Apartment"
+    has_purifier: Optional[bool] = True
+    cooking_fuel: Optional[str] = "Induction"
+    commute_mode: Optional[str] = "Metro/Train"
+    commute_distance_km: Optional[float] = 12.0
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
 
 class ChatRequest(BaseModel):
     question: str
@@ -152,6 +173,15 @@ def db_post_to_dict(p: CommunityPostModel) -> dict:
     }
 
 
+def get_user_from_auth_header(authorization: Optional[str], db) -> Optional[UserModel]:
+    if not authorization:
+        return None
+    token = authorization.replace("Bearer ", "").strip()
+    if not token:
+        return None
+    return db.query(UserModel).filter(UserModel.token == token).first()
+
+
 # ---------------------------------------------------------------------------
 # Routes — Health
 # ---------------------------------------------------------------------------
@@ -159,6 +189,108 @@ def db_post_to_dict(p: CommunityPostModel) -> dict:
 @app.get("/api/health", tags=["Health"])
 def health_check():
     return {"status": "ok", "version": "1.0.0"}
+
+
+# ---------------------------------------------------------------------------
+# Routes — User Authentication & Profile Module
+# ---------------------------------------------------------------------------
+
+@app.post("/api/auth/register", tags=["Auth"])
+def register(body: RegisterRequest):
+    """Register a new user account with initial lifestyle parameters."""
+    db = SessionLocal()
+    try:
+        existing = db.query(UserModel).filter(UserModel.email == body.email.lower()).first()
+        if existing:
+            raise HTTPException(status_code=400, detail="An account with this email already exists.")
+
+        user_token = secrets.token_hex(24)
+        new_user = UserModel(
+            id=str(uuid.uuid4()),
+            name=body.name.strip(),
+            email=body.email.lower().strip(),
+            password_hash=hash_password(body.password),
+            token=user_token,
+            city=body.city or "New Delhi",
+            country=body.country or "India",
+            home_type=body.home_type or "Apartment",
+            has_purifier=body.has_purifier if body.has_purifier is not None else True,
+            cooking_fuel=body.cooking_fuel or "Induction",
+            commute_mode=body.commute_mode or "Metro/Train",
+            commute_distance_km=body.commute_distance_km or 12.0
+        )
+        db.add(new_user)
+        db.commit()
+
+        # Add self as first default family member
+        self_member = FamilyMemberModel(
+            id=str(uuid.uuid4()),
+            user_id=new_user.id,
+            name=new_user.name,
+            role="Self",
+            age=30,
+            health_conditions="None",
+            risk_level="Low"
+        )
+        db.add(self_member)
+        db.commit()
+        db.refresh(new_user)
+
+        return {
+            "token": user_token,
+            "user": db_user_to_dict(new_user)
+        }
+    finally:
+        db.close()
+
+
+@app.post("/api/auth/login", tags=["Auth"])
+def login(body: LoginRequest):
+    """Authenticate existing user credentials."""
+    db = SessionLocal()
+    try:
+        user = db.query(UserModel).filter(UserModel.email == body.email.lower()).first()
+        if not user or not verify_password(body.password, user.password_hash):
+            raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+        # Generate fresh session token
+        user.token = secrets.token_hex(24)
+        db.commit()
+        db.refresh(user)
+
+        return {
+            "token": user.token,
+            "user": db_user_to_dict(user)
+        }
+    finally:
+        db.close()
+
+
+@app.get("/api/auth/me", tags=["Auth"])
+def get_current_user(authorization: Optional[str] = Header(None)):
+    """Fetch profile of currently authenticated user using Bearer token."""
+    db = SessionLocal()
+    try:
+        user = get_user_from_auth_header(authorization, db)
+        if not user:
+            raise HTTPException(status_code=401, detail="Unauthorized. Please log in.")
+        return {"user": db_user_to_dict(user)}
+    finally:
+        db.close()
+
+
+@app.post("/api/auth/logout", tags=["Auth"])
+def logout(authorization: Optional[str] = Header(None)):
+    """Log out user session."""
+    db = SessionLocal()
+    try:
+        user = get_user_from_auth_header(authorization, db)
+        if user:
+            user.token = None
+            db.commit()
+        return {"success": True, "message": "Logged out successfully."}
+    finally:
+        db.close()
 
 
 # ---------------------------------------------------------------------------
@@ -232,7 +364,7 @@ def calc_impact(body: ImpactRequest):
 
 
 # ---------------------------------------------------------------------------
-# Routes — Users
+# Routes — Users & Family Profiles
 # ---------------------------------------------------------------------------
 
 @app.get("/api/users/{user_id}", tags=["Users"])
@@ -255,13 +387,6 @@ def update_user(user_id: str, body: UserUpdateRequest):
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
         update_data = body.model_dump(exclude_none=True)
-        field_map = {
-            "home_type": "home_type",
-            "has_purifier": "has_purifier",
-            "cooking_fuel": "cooking_fuel",
-            "commute_mode": "commute_mode",
-            "commute_distance_km": "commute_distance_km",
-        }
         for field, value in update_data.items():
             setattr(user, field, value)
         db.commit()

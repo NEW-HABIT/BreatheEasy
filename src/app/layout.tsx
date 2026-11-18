@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { AuthProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'BreatheEasy — GenAI Urban Air Quality Assistant',
@@ -12,9 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-        {children}
+    <html lang="en">
+      <body className="antialiased selection:bg-emerald-200 selection:text-emerald-900">
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

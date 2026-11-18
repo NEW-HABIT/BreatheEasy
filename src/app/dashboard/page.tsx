@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@/components/Navbar';
 import { AlertBanner } from '@/components/AlertBanner';
 import { AqiGauge } from '@/components/AqiGauge';
@@ -19,10 +20,12 @@ import { fetchLiveAqi, fetchCommunityPosts, fetchSwapsFromBackend } from '@/lib/
 import { DEFAULT_FAMILY_MEMBERS, INITIAL_COMMUNITY_POSTS } from '@/lib/store';
 import { INITIAL_SUSTAINABLE_SWAPS } from '@/lib/impactCalculator';
 import { CITIES_DATA } from '@/lib/aqiData';
-import { AqiData, FamilyMember, RoutineItem } from '@/types';
-import { ArrowRight, Leaf } from 'lucide-react';
+import { AqiData, FamilyMember } from '@/types';
+import { useAuth } from '@/context/AuthContext';
+import { ArrowRight, Leaf, Lock, LogIn, UserPlus, Sparkles, CheckCircle2 } from 'lucide-react';
 
 export default function DashboardPage() {
+  const { user, isAuthenticated, isLoading: isAuthLoading, login } = useAuth();
   const [selectedCity, setSelectedCity] = useState<string>('New Delhi');
   const [aqiData, setAqiData] = useState<AqiData>(CITIES_DATA['New Delhi']);
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>(DEFAULT_FAMILY_MEMBERS);
@@ -34,6 +37,16 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [communityPosts, setCommunityPosts] = useState(INITIAL_COMMUNITY_POSTS);
   const [swaps, setSwaps] = useState(INITIAL_SUSTAINABLE_SWAPS);
+
+  // Sync user profile city and family members when user logs in
+  useEffect(() => {
+    if (user) {
+      if (user.city) setSelectedCity(user.city);
+      if (user.familyMembers && user.familyMembers.length > 0) {
+        setFamilyMembers(user.familyMembers);
+      }
+    }
+  }, [user]);
 
   // Fetch live AQI on city change
   useEffect(() => {
@@ -51,7 +64,7 @@ export default function DashboardPage() {
   // Load saved state from localStorage & backend
   useEffect(() => {
     const savedFam = localStorage.getItem('breatheasy_family');
-    if (savedFam) {
+    if (savedFam && !user?.familyMembers) {
       try {
         setFamilyMembers(JSON.parse(savedFam));
       } catch (e) {
@@ -68,7 +81,7 @@ export default function DashboardPage() {
     fetchSwapsFromBackend().then(backendSwaps => {
       if (backendSwaps && backendSwaps.length > 0) setSwaps(backendSwaps);
     });
-  }, []);
+  }, [user]);
 
   const handleSaveFamily = (members: FamilyMember[]) => {
     setFamilyMembers(members);
@@ -111,6 +124,78 @@ export default function DashboardPage() {
     setExternalAiPrompt(prompt);
     setActiveTab('advisor');
   };
+
+  // ── Authentication Gate (Protected Route) ──
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner
+          message="Checking household authorization..."
+          submessage="Connecting to BreatheEasy secure user session"
+        />
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex flex-col justify-center items-center p-4 selection:bg-emerald-200">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-200/40 blur-[120px] rounded-full pointer-events-none -z-10" />
+
+        <div className="w-full max-w-md glass-card-strong rounded-3xl p-6 sm:p-8 shadow-2xl border border-white/80 space-y-6 text-center">
+          <div className="h-12 w-12 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 mx-auto flex items-center justify-center text-white shadow-md shadow-emerald-500/20">
+            <Lock className="h-6 w-6" />
+          </div>
+
+          <div>
+            <h2 className="text-xl font-extrabold text-slate-900">Protected Family Shield</h2>
+            <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+              Air quality protocols, pediatric asthma reminders, and home emission profiles are calibrated to registered household accounts.
+            </p>
+          </div>
+
+          <div className="bg-emerald-50/80 border border-emerald-200 p-3.5 rounded-2xl text-xs space-y-2 text-left">
+            <span className="font-bold text-emerald-900 block flex items-center space-x-1.5">
+              <Sparkles className="h-4 w-4 text-emerald-600" />
+              <span>Instant Access Options:</span>
+            </span>
+            <p className="text-slate-600 leading-relaxed">
+              Sign in with your email or use the 1-click evaluator demo account to test all features instantly.
+            </p>
+            <button
+              onClick={() => login('rajesh.sharma@example.com', 'password123')}
+              className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-sm transition flex items-center justify-center space-x-2"
+            >
+              <CheckCircle2 className="h-4 w-4" />
+              <span>1-Click Evaluator Demo Sign In</span>
+            </button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <Link
+              href="/auth/login"
+              className="py-3 rounded-2xl glass-card hover:bg-white text-slate-800 font-bold text-xs border border-slate-200 transition flex items-center justify-center space-x-1.5"
+            >
+              <LogIn className="h-4 w-4 text-emerald-600" />
+              <span>Sign In</span>
+            </Link>
+
+            <Link
+              href="/auth/register"
+              className="py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md transition flex items-center justify-center space-x-1.5"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>Create Account</span>
+            </Link>
+          </div>
+
+          <Link href="/" className="text-xs text-slate-400 hover:text-emerald-700 block transition font-medium">
+            ← Return to Landing Page
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col selection:bg-emerald-200">

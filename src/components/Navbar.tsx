@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Wind, Users, ShieldAlert, Sparkles, Calendar, ArrowLeftRight, 
-  HeartHandshake, MapPin, Key, Leaf, Home, Search
+  HeartHandshake, MapPin, Key, Leaf, Home, LogOut, LogIn, User
 } from 'lucide-react';
 import { AqiData } from '@/types';
 import { getAqiCategory } from '@/lib/aqiData';
+import { useAuth } from '@/context/AuthContext';
 
 interface NavbarProps {
   aqiData: AqiData;
@@ -35,6 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const cat = getAqiCategory(aqiData.aqi);
   const [isSearching, setIsSearching] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const { user, isAuthenticated, logout } = useAuth();
 
   const navItems = [
     { id: 'dashboard', label: 'Overview', icon: Wind },
@@ -80,7 +82,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </div>
 
-          {/* City Search, GPS & Live Telemetry Controls */}
+          {/* Controls: City search, GPS, AQI badge, Auth User */}
           <div className="flex items-center space-x-2 sm:space-x-2.5">
             {isSearching ? (
               <form onSubmit={handleSearchSubmit} className="flex items-center space-x-1">
@@ -178,6 +180,34 @@ export const Navbar: React.FC<NavbarProps> = ({
               <Users className="h-4 w-4" />
               <span className="hidden md:inline">Family Shield</span>
             </button>
+
+            {/* User Account / Auth Status */}
+            {isAuthenticated && user ? (
+              <div className="flex items-center space-x-1.5 bg-emerald-50/80 border border-emerald-200 py-1 px-2.5 rounded-xl text-xs">
+                <div className="h-6 w-6 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-[11px]">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="hidden xl:block text-left">
+                  <span className="font-bold text-slate-800 text-[11px] block leading-tight">{user.name.split(' ')[0]}</span>
+                  <span className="text-[9px] text-emerald-700 block font-semibold leading-none">{user.homeType}</span>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-1 text-slate-400 hover:text-rose-600 transition"
+                  title="Sign Out"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/auth/login"
+                className="flex items-center space-x-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-sm transition"
+              >
+                <LogIn className="h-3.5 w-3.5" />
+                <span>Sign In</span>
+              </Link>
+            )}
 
             {/* Return to Home Landing */}
             <Link
