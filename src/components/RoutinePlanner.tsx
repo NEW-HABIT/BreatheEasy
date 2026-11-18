@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { RoutineItem, AqiData, FamilyMember } from '@/types';
-import { CheckCircle2, Circle, Sparkles, RefreshCw, Clock, Flame, Wind, Dumbbell, ShieldAlert } from 'lucide-react';
+import { CheckCircle2, Circle, RefreshCw, Clock, Flame, Wind, Dumbbell, ShieldAlert, Sparkles } from 'lucide-react';
+import { generateDailyRoutine } from '@/lib/api';
 
 interface RoutinePlannerProps {
   initialRoutine: RoutineItem[];
@@ -26,21 +27,11 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
 
   const handleRegenerate = async () => {
     setIsGenerating(true);
-    try {
-      const res = await fetch('/api/routine', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ aqiData, familyMembers })
-      });
-      const data = await res.json();
-      if (data.routine) {
-        setRoutine(data.routine);
-      }
-    } catch (e) {
-      console.error('Failed to regenerate routine', e);
-    } finally {
-      setIsGenerating(false);
+    const newRoutine = await generateDailyRoutine(aqiData, familyMembers);
+    if (newRoutine && newRoutine.length > 0) {
+      setRoutine(newRoutine);
     }
+    setIsGenerating(false);
   };
 
   const getCategoryIcon = (category: string) => {
@@ -56,46 +47,46 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
   const getSafetyBadge = (rating: string) => {
     switch (rating) {
       case 'Dangerous':
-        return 'bg-rose-500/10 text-rose-400 border-rose-500/30';
+        return 'bg-rose-100 text-rose-800 border-rose-200';
       case 'Caution':
-        return 'bg-amber-500/10 text-amber-400 border-amber-500/30';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       default:
-        return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
     }
   };
 
   const completedCount = routine.filter(r => r.isCompleted).length;
-  const progressPercent = Math.round((completedCount / routine.length) * 100);
+  const progressPercent = routine.length > 0 ? Math.round((completedCount / routine.length) * 100) : 0;
 
   return (
     <div className="space-y-4">
       {/* Header bar */}
-      <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-5 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="glass-card-strong rounded-3xl p-6 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/80">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="text-cyan-400 font-bold uppercase text-xs tracking-wider">AI Diurnal Schedule</span>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-slate-800 text-slate-300">
-              Personalized for {aqiData.city} (AQI: {aqiData.aqi})
+            <span className="text-emerald-700 font-extrabold uppercase text-xs tracking-wider">AI Diurnal Schedule</span>
+            <span className="text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-semibold border border-emerald-200">
+              Calibrated for {aqiData.city} (AQI {aqiData.aqi})
             </span>
           </div>
-          <h2 className="text-lg font-bold text-white mt-1">
+          <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 mt-1">
             Smog-Resilient & Low-Emission Daily Routine
           </h2>
-          <p className="text-xs text-slate-400 mt-1 max-w-2xl">
-            Synchronized with boundary-layer atmospheric dispersion. Shifts high-exposure chores away from smog peaks.
+          <p className="text-xs text-slate-500 mt-1 max-w-2xl leading-relaxed">
+            Synchronized with solar boundary layer atmospheric mixing. Shifts exposure chores away from high ground-level pollution spikes.
           </p>
         </div>
 
         <div className="flex items-center space-x-3 shrink-0">
           <div className="text-right hidden sm:block">
-            <span className="text-xs text-slate-400 block">Day Completion</span>
-            <span className="text-sm font-bold text-cyan-300">{completedCount} of {routine.length} Actions</span>
+            <span className="text-xs text-slate-400 block font-medium">Daily Completion</span>
+            <span className="text-sm font-extrabold text-emerald-800">{completedCount} of {routine.length} Actions</span>
           </div>
 
           <button
             onClick={handleRegenerate}
             disabled={isGenerating}
-            className="flex items-center space-x-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-teal-500 hover:from-cyan-400 hover:to-teal-400 text-slate-950 font-bold text-xs shadow-md transition disabled:opacity-60"
+            className="flex items-center space-x-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition disabled:opacity-50"
           >
             <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
             <span>{isGenerating ? 'Synthesizing...' : 'Re-optimize with AI'}</span>
@@ -104,9 +95,9 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
       </div>
 
       {/* Progress bar */}
-      <div className="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+      <div className="w-full bg-slate-200/60 rounded-full h-2.5 overflow-hidden">
         <div 
-          className="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full transition-all duration-500"
+          className="bg-gradient-to-r from-emerald-500 to-teal-500 h-full transition-all duration-500 rounded-full"
           style={{ width: `${progressPercent}%` }}
         />
       </div>
@@ -119,40 +110,40 @@ export const RoutinePlanner: React.FC<RoutinePlannerProps> = ({
             <div
               key={item.id}
               onClick={() => toggleComplete(item.id)}
-              className={`border rounded-xl p-4 transition cursor-pointer flex items-start space-x-3.5 ${
+              className={`rounded-2xl p-4.5 transition cursor-pointer flex items-start space-x-3.5 border ${
                 item.isCompleted
-                  ? 'bg-slate-950/60 border-slate-800/60 opacity-75'
-                  : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 shadow-md'
+                  ? 'bg-slate-50/70 border-slate-200 opacity-70'
+                  : 'glass-card border-white/80 hover:shadow-md'
               }`}
             >
-              <button className="mt-0.5 text-cyan-400 hover:text-cyan-300 transition shrink-0">
+              <button className="mt-0.5 text-emerald-600 transition shrink-0">
                 {item.isCompleted ? (
-                  <CheckCircle2 className="h-5 w-5 text-emerald-400 fill-emerald-500/10" />
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 fill-emerald-100" />
                 ) : (
-                  <Circle className="h-5 w-5 text-slate-500" />
+                  <Circle className="h-5 w-5 text-slate-400" />
                 )}
               </button>
 
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center space-x-2">
-                    <span className="text-xs font-bold text-cyan-400">{item.time}</span>
-                    <span className="text-xs font-semibold text-white truncate">{item.title}</span>
+                    <span className="text-xs font-extrabold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">{item.time}</span>
+                    <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">{item.title}</span>
                   </div>
 
                   <div className="flex items-center space-x-2">
                     {item.co2ImpactKg ? (
-                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
                         Saves {item.co2ImpactKg} kg CO₂
                       </span>
                     ) : null}
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getSafetyBadge(item.airSafetyRating)}`}>
+                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${getSafetyBadge(item.airSafetyRating)}`}>
                       {item.airSafetyRating} Outdoor Risk
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 mt-1.5 leading-relaxed">
+                <p className="text-xs text-slate-600 mt-2 leading-relaxed">
                   {item.description}
                 </p>
               </div>
